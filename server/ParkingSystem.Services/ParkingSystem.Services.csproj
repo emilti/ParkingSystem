@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ParkingSystem.Common\ParkingSystem.Common.csproj" />
+    <ProjectReference Include="..\ParkingSystem.Data\ParkingSystem.Data.csproj" />
+    <ProjectReference Include="..\ParkingSystem.Models\ParkingSystem.Models.csproj" />
+  </ItemGroup>
+
+</Project>
