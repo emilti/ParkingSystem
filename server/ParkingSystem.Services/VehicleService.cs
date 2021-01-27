@@ -47,7 +47,7 @@ namespace ParkingSystem.Services
             Decimal? dueAmount = CalculateDueAmount(registrationNumber, exitParkingDate);
             if (dueAmount != null)
             {
-                var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber);
+                var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
                 vehicle.IsInParking = false;
                 vehicle.ExitParkingDate = exitParkingDate;
                 this.data.SaveChanges();
