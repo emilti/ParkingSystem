@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ParkingSystem.Common;
+﻿using ParkingSystem.Common;
 using ParkingSystem.Common.Utils;
 using ParkingSystem.Data;
 using ParkingSystem.Data.Models;
