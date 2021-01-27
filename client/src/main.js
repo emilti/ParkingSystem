@@ -9,7 +9,6 @@ import App from './App.vue'
 
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false
-// Vue.prototype.moment = moment
 
 new Vue({
   render: h => h(App),
