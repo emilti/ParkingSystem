@@ -12,7 +12,7 @@ namespace ParkingSystem.Data.Models
         [MaxLength(20)]
         public string RegistrationNumber { get; set; }
         public DateTime EnterParkingDate { get; set; }
-        public DateTime ExitParkingDate { get; set; }
+        public DateTime? ExitParkingDate { get; set; }
         public bool IsInParking { get; set; }
         [Required]
         public int CategoryId { get; set; }
