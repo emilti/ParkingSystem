@@ -19,9 +19,9 @@ namespace ParkingSystem.Common.Utils
             return occupiedParkingSpaces;
         }
 
-        public static decimal? ApplyDiscount(IEnumerable<Discount> discounts, Vehicle vehicle, decimal? dueAmount)
+        public static decimal? ApplyDiscount(IEnumerable<Discount> discounts, int? discountId, decimal? dueAmount)
         {
-            var discountPercentage = discounts.FirstOrDefault(a => a.DiscountId == vehicle.DiscountId)?.DiscountPercentage;
+            var discountPercentage = discounts.FirstOrDefault(a => a.DiscountId == discountId)?.DiscountPercentage;
             discountPercentage = discountPercentage != null ? discountPercentage : 0;
             dueAmount = dueAmount - dueAmount * discountPercentage / 100;
             return dueAmount;
@@ -82,25 +82,28 @@ namespace ParkingSystem.Common.Utils
             return tarrifTime;
         }
 
-        public static TimeSpan GetMiddleDaysTarrifTime(DateTime currentDateTime, DateTime vehicleEntryDate, Tarrif tarrif, TimeSpan tarrifTime)
+        public static TimeSpan GetMiddleDaysTarrifTime(DateTime currentDateTime, DateTime enterParkingDate, Tarrif tarrif, TimeSpan tarrifTime)
         {
-            if (currentDateTime.Day > vehicleEntryDate.Day + 1)
+            if (currentDateTime.Date > enterParkingDate
+                && currentDateTime.Day != enterParkingDate.Day)
             {
-                tarrifTime = tarrifTime + (currentDateTime.Day - vehicleEntryDate.Day - 1) * (tarrif.To - tarrif.From);
+                tarrifTime = tarrifTime + ((currentDateTime.Date - enterParkingDate.Date).Days - 1) * (tarrif.To - tarrif.From);
             }
 
             return tarrifTime;
         }
         public static TimeSpan GetDayOfEntranceTarrifTime(Tarrif tarrif, DateTime enterParkingDate, DateTime currentDateTime, TimeSpan tarrifTime)
         {
-            if (currentDateTime.Day > enterParkingDate.Day
+            if (currentDateTime.Date > enterParkingDate.Date 
+                && currentDateTime.Day != enterParkingDate.Day
                 && enterParkingDate.TimeOfDay >= tarrif.From
                 && enterParkingDate.TimeOfDay <= tarrif.To)
             {
                 tarrifTime = tarrifTime + (tarrif.To - enterParkingDate.TimeOfDay);
             }
 
-            if (currentDateTime.Day > enterParkingDate.Day
+            if (currentDateTime.Date > enterParkingDate.Date
+                && currentDateTime.Day != enterParkingDate.Day
                 && enterParkingDate.TimeOfDay <= tarrif.From)
             {
                 tarrifTime = tarrifTime + (tarrif.To - tarrif.From);

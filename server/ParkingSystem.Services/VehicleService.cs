@@ -40,31 +40,37 @@ namespace ParkingSystem.Services
             return vehicle.VehicleId;
         }
 
-        public Decimal? ExitParking(string registrationNumber)
-        {
-            DateTime exitParkingDate = DateTime.Now;
-            Decimal? dueAmount = CalculateDueAmount(registrationNumber, exitParkingDate);
-            if (dueAmount != null)
-            {
-                var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
-                vehicle.IsInParking = false;
-                vehicle.ExitParkingDate = exitParkingDate;
-                this.data.SaveChanges();
-                return dueAmount;
-            }
+        public Decimal? ExitParking(string registrationNumber, DateTime exitParkingDate)
+        {           
+            //var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
+            //Decimal? dueAmount = CalculateDueAmount(vehicle, exitParkingDate);
+            //if (dueAmount != null)
+            //{
+            //    vehicle.IsInParking = false;
+            //    vehicle.ExitParkingDate = exitParkingDate;
+            //    this.data.SaveChanges();
+            //    return dueAmount;
+            //}
 
             return null;
         }
 
-        public Decimal? CalculateDueAmount(string registrationNumber, DateTime currentDateTime)
+        public VehicleInfoModel GetVehicleByRegistrationNumber(string registrationNumber)
         {
-            var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber);
-            if (vehicle == null)
+            var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
+            VehicleInfoModel vehicleInfo = new VehicleInfoModel()
             {
-                return null;
-            }
+                CategoryId = vehicle.CategoryId,
+                DiscountId = vehicle.DiscountId,
+                EnterParkingDate = vehicle.EnterParkingDate,
+                RegistrationNumber = vehicle.RegistrationNumber
+            };
+            return vehicleInfo;
+        }
 
-            var tarrifs = this.data.Tarrifs.Where(a => a.CategoryId == vehicle.CategoryId).ToList();
+        public Decimal? CalculateDueAmount(int vehicleCategoryId, int? vehicleDiscountId, DateTime vehicleEnterParkingDate, DateTime currentDateTime)
+        {
+            var tarrifs = this.data.Tarrifs.Where(a => a.CategoryId == vehicleCategoryId).ToList();
             if (tarrifs != null && tarrifs.Count > 0)
             {
                 Decimal? dueAmount = 0;
@@ -72,14 +78,14 @@ namespace ParkingSystem.Services
                 {
                     TimeSpan tarrifTime = new TimeSpan();
 
-                    tarrifTime = CalculationUtilities.GetSameDayTarrifTime(vehicle.EnterParkingDate, tarrif, currentDateTime, tarrifTime);
-                    tarrifTime = CalculationUtilities.GetMiddleDaysTarrifTime(currentDateTime, vehicle.EnterParkingDate, tarrif, tarrifTime);
-                    tarrifTime = CalculationUtilities.GetDayOfEntranceTarrifTime(tarrif, vehicle.EnterParkingDate, currentDateTime, tarrifTime);
+                    tarrifTime = CalculationUtilities.GetSameDayTarrifTime(vehicleEnterParkingDate, tarrif, currentDateTime, tarrifTime);
+                    tarrifTime = CalculationUtilities.GetMiddleDaysTarrifTime(currentDateTime, vehicleEnterParkingDate, tarrif, tarrifTime);
+                    tarrifTime = CalculationUtilities.GetDayOfEntranceTarrifTime(tarrif, vehicleEnterParkingDate, currentDateTime, tarrifTime);
 
                     dueAmount = dueAmount + (Decimal?)(tarrifTime.TotalSeconds / Constants.TOTAL_SECONDS_IN_HOUR) * tarrif.Price;
                 }
 
-                dueAmount = CalculationUtilities.ApplyDiscount(this.data.Discounts, vehicle, dueAmount);
+                dueAmount = CalculationUtilities.ApplyDiscount(this.data.Discounts, vehicleDiscountId, dueAmount);
                 var dueAmountFormatted = FormatUtilities.FormatDecimal(dueAmount);
                 return dueAmountFormatted;
             }
@@ -96,11 +102,10 @@ namespace ParkingSystem.Services
 
         public List<VehicleInfoModel> GetVehicles()
         {
-            var vehicles = this.data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoModel() { RegistrationNumber = a.RegistrationNumber, EnterDate = a.EnterParkingDate }).ToList();
-
-            foreach (var vehicle in vehicles)
+            var vehicles = this.data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoModel() { RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate }).ToList();
+            foreach (var vehicleInfoModel in vehicles)
             {
-                vehicle.DueAmount = CalculateDueAmount(vehicle.RegistrationNumber, DateTime.Now);
+                vehicleInfoModel.DueAmount = CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
             }
 
             return vehicles;

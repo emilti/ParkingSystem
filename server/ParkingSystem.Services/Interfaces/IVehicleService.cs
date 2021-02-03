@@ -9,8 +9,9 @@ namespace ParkingSystem.Services.Interfaces
     {
         int GetAvailableSpaces();
         int? EnterParking(int categoryId, int? discountId, string registrationNumber);
-        Decimal? ExitParking(string registrationNumber);
-        Decimal? CalculateDueAmount(string registrationNumber, DateTime currentDateTime);
+        VehicleInfoModel GetVehicleByRegistrationNumber(string registrationNumber);
+        Decimal? ExitParking(string registrationNumber, DateTime exitParkingDate);
+        Decimal? CalculateDueAmount(int vehicleCategoryId, int? vehicleDiscountId, DateTime vehicleEnterParkingDate, DateTime currentDateTime);
         List<VehicleInfoModel> GetVehicles();
     }
 }

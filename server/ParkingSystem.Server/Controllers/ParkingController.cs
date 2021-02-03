@@ -41,7 +41,7 @@ namespace ParkingSystem.Server.Controllers
         [Route("[action]")]
         public IActionResult Exit(VehicleExitModel vehicle)
         {
-            Decimal? dueAmount = VehicleService.ExitParking(vehicle.RegistrationNumber);
+            Decimal? dueAmount = VehicleService.ExitParking(vehicle.RegistrationNumber, DateTime.Now);
             if(dueAmount == null)
             {
                 return BadRequest("Invalid registration number.");
@@ -53,7 +53,8 @@ namespace ParkingSystem.Server.Controllers
         [Route("[action]")]
         public IActionResult GetDueAmount(string registrationNumber)
         {
-            decimal? dueAmount = VehicleService.CalculateDueAmount(registrationNumber, DateTime.Now);
+            VehicleInfoModel vehicleInfoModel = VehicleService.GetVehicleByRegistrationNumber(registrationNumber);
+            decimal? dueAmount = VehicleService.CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
             return Ok(dueAmount);
         }
 
