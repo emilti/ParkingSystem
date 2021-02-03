@@ -41,16 +41,16 @@ namespace ParkingSystem.Services
         }
 
         public Decimal? ExitParking(string registrationNumber, DateTime exitParkingDate)
-        {           
-            //var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
-            //Decimal? dueAmount = CalculateDueAmount(vehicle, exitParkingDate);
-            //if (dueAmount != null)
-            //{
-            //    vehicle.IsInParking = false;
-            //    vehicle.ExitParkingDate = exitParkingDate;
-            //    this.data.SaveChanges();
-            //    return dueAmount;
-            //}
+        {
+            var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
+            Decimal? dueAmount = CalculateDueAmount(vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, exitParkingDate);
+            if (dueAmount != null)
+            {
+                vehicle.IsInParking = false;
+                vehicle.ExitParkingDate = exitParkingDate;
+                this.data.SaveChanges();
+                return dueAmount;
+            }
 
             return null;
         }
@@ -78,9 +78,9 @@ namespace ParkingSystem.Services
                 {
                     TimeSpan tarrifTime = new TimeSpan();
 
-                    tarrifTime = CalculationUtilities.GetSameDayTarrifTime(vehicleEnterParkingDate, tarrif, currentDateTime, tarrifTime);
-                    tarrifTime = CalculationUtilities.GetMiddleDaysTarrifTime(currentDateTime, vehicleEnterParkingDate, tarrif, tarrifTime);
-                    tarrifTime = CalculationUtilities.GetDayOfEntranceTarrifTime(tarrif, vehicleEnterParkingDate, currentDateTime, tarrifTime);
+                    tarrifTime = CalculationUtilities.GetSameDayTarrifTime(vehicleEnterParkingDate, currentDateTime, tarrif, tarrifTime);
+                    tarrifTime = CalculationUtilities.GetMiddleDaysTarrifTime(vehicleEnterParkingDate, currentDateTime, tarrif, tarrifTime);
+                    tarrifTime = CalculationUtilities.GetDayOfEntranceTarrifTime(vehicleEnterParkingDate, currentDateTime, tarrif, tarrifTime);
 
                     dueAmount = dueAmount + (Decimal?)(tarrifTime.TotalSeconds / Constants.TOTAL_SECONDS_IN_HOUR) * tarrif.Price;
                 }

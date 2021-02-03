@@ -26,46 +26,46 @@ namespace ParkingSystem.Common.Utils
             dueAmount = dueAmount - dueAmount * discountPercentage / 100;
             return dueAmount;
         }
-        public static TimeSpan GetSameDayTarrifTime(DateTime enteredParkingDate, Tarrif tarrif, DateTime currentDateTime, TimeSpan tarrifTime)
+        public static TimeSpan GetSameDayTarrifTime(DateTime enteredParkingDate, DateTime currentDateTime, Tarrif tarrif, TimeSpan tarrifTime)
         {
             //Vehicle Entered time in the Parking and Current time in the same tarrif time
-            if (currentDateTime.Date == enteredParkingDate.Date
-               && tarrif.From <= currentDateTime.TimeOfDay
-               && tarrif.To >= currentDateTime.TimeOfDay
-               && currentDateTime.TimeOfDay <= tarrif.To
-               && enteredParkingDate.TimeOfDay >= tarrif.From)
+            if ( enteredParkingDate.Date == currentDateTime.Date
+                && enteredParkingDate.TimeOfDay >= tarrif.From
+                && tarrif.From <= currentDateTime.TimeOfDay
+                && currentDateTime.TimeOfDay <= tarrif.To             
+              )
             {
                 tarrifTime = tarrifTime + (currentDateTime.TimeOfDay - enteredParkingDate.TimeOfDay);
             }
 
             // Entered time in the tarrif time, Current time after the end of the tarrif time
-            if (currentDateTime.Date == enteredParkingDate.Date
+            if (enteredParkingDate.Date == currentDateTime.Date
                && tarrif.From <= enteredParkingDate.TimeOfDay
-               && tarrif.To >= enteredParkingDate.TimeOfDay
+               && enteredParkingDate.TimeOfDay <= tarrif.To
                && currentDateTime.TimeOfDay >= tarrif.To)
             {
                 tarrifTime = tarrifTime + (tarrif.To - enteredParkingDate.TimeOfDay);
             }
 
             // Entered time before the tarrif time, Current time after the end of the tarrif time
-            if (currentDateTime.Date == enteredParkingDate.Date
-               && tarrif.From >= enteredParkingDate.TimeOfDay
+            if (enteredParkingDate.Date == currentDateTime.Date
+               && enteredParkingDate.TimeOfDay <= tarrif.From
                && currentDateTime.TimeOfDay >= tarrif.To)
             {
                 tarrifTime = tarrifTime + (tarrif.To - tarrif.From);
             }
 
             // Entered time before the tarrif time, Current time in the tarrif time
-            if (currentDateTime.Date == enteredParkingDate.Date
-               && tarrif.From >= enteredParkingDate.TimeOfDay
-               && currentDateTime.TimeOfDay <= tarrif.To
-               && currentDateTime.TimeOfDay >= tarrif.From)
+            if (enteredParkingDate.Date == currentDateTime.Date
+               && enteredParkingDate.TimeOfDay <= tarrif.From
+               && tarrif.From <= currentDateTime.TimeOfDay 
+               && currentDateTime.TimeOfDay <= tarrif.To)
             {
                 tarrifTime = tarrifTime + (currentDateTime.TimeOfDay - tarrif.From);
             }
 
             // Entered time day before Current day, Current time in the tarrif time
-            if (currentDateTime.Date > enteredParkingDate.Date
+            if (enteredParkingDate.Date < currentDateTime.Date
                 && tarrif.From <= currentDateTime.TimeOfDay
                 && currentDateTime.TimeOfDay <= tarrif.To)
             {
@@ -73,8 +73,8 @@ namespace ParkingSystem.Common.Utils
             }
 
             // Entered time day before current day, Current time after the end of the tarrif time
-            if (currentDateTime.TimeOfDay > tarrif.To
-                && currentDateTime.Date > enteredParkingDate.Date)
+            if (enteredParkingDate.Date < currentDateTime.Date
+                && currentDateTime.TimeOfDay > tarrif.To)
             {
                 tarrifTime = tarrifTime + (tarrif.To - tarrif.From);
             }
@@ -82,28 +82,28 @@ namespace ParkingSystem.Common.Utils
             return tarrifTime;
         }
 
-        public static TimeSpan GetMiddleDaysTarrifTime(DateTime currentDateTime, DateTime enterParkingDate, Tarrif tarrif, TimeSpan tarrifTime)
+        public static TimeSpan GetMiddleDaysTarrifTime(DateTime enterParkingDate, DateTime currentDateTime, Tarrif tarrif, TimeSpan tarrifTime)
         {
-            if (currentDateTime.Date > enterParkingDate
-                && currentDateTime.Day != enterParkingDate.Day)
+            if (enterParkingDate.Date < currentDateTime.Date 
+                && enterParkingDate.Day != currentDateTime.Day)
             {
                 tarrifTime = tarrifTime + ((currentDateTime.Date - enterParkingDate.Date).Days - 1) * (tarrif.To - tarrif.From);
             }
 
             return tarrifTime;
         }
-        public static TimeSpan GetDayOfEntranceTarrifTime(Tarrif tarrif, DateTime enterParkingDate, DateTime currentDateTime, TimeSpan tarrifTime)
+        public static TimeSpan GetDayOfEntranceTarrifTime(DateTime enterParkingDate, DateTime currentDateTime, Tarrif tarrif, TimeSpan tarrifTime)
         {
-            if (currentDateTime.Date > enterParkingDate.Date 
-                && currentDateTime.Day != enterParkingDate.Day
-                && enterParkingDate.TimeOfDay >= tarrif.From
+            if ( enterParkingDate.Date < currentDateTime.Date
+                && enterParkingDate.Day != currentDateTime.Day
+                && tarrif.From <= enterParkingDate.TimeOfDay
                 && enterParkingDate.TimeOfDay <= tarrif.To)
             {
                 tarrifTime = tarrifTime + (tarrif.To - enterParkingDate.TimeOfDay);
             }
 
-            if (currentDateTime.Date > enterParkingDate.Date
-                && currentDateTime.Day != enterParkingDate.Day
+            if (enterParkingDate.Date < currentDateTime.Date
+                && enterParkingDate.Day != currentDateTime.Day
                 && enterParkingDate.TimeOfDay <= tarrif.From)
             {
                 tarrifTime = tarrifTime + (tarrif.To - tarrif.From);
