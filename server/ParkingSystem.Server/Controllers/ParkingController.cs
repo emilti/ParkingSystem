@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ParkingSystem.Common.Responses;
 using ParkingSystem.Models.Vehicles;
 using ParkingSystem.Server.Infrastructure.Filters;
 using ParkingSystem.Server.Models.Vehicles;
@@ -24,25 +25,22 @@ namespace ParkingSystem.Server.Controllers
             return this.Ok("Available parking spaces: " + VehicleService.GetAvailableSpaces());
         }
 
-        [GlobalModelStateValidatorAttribute]
+
         [HttpPost]
         [Route("[action]")]
-        public IActionResult Enter(VehicleEnterModel vehicle) 
-        {           
-            int? id = VehicleService.EnterParking(vehicle.CategoryId, vehicle.DiscountId, vehicle.RegistrationNumber);
-            if(id == null)
-            {
-                return BadRequest("No available spaces in the parking");
-            }
-            return Ok("Vehicle with registration number " + vehicle.RegistrationNumber + " entered the parking.");
+        [GlobalModelStateValidatorAttribute]
+        public IActionResult Enter(VehicleEnterModel vehicle)
+        {
+            ApiResponse response = VehicleService.EnterParking(vehicle.CategoryId, vehicle.DiscountId, vehicle.RegistrationNumber);
+            return new JsonResult(response.Message);
         }
-        
+
         [HttpPost]
         [Route("[action]")]
         public IActionResult Exit(VehicleExitModel vehicle)
         {
             Decimal? dueAmount = VehicleService.ExitParking(vehicle.RegistrationNumber, DateTime.Now);
-            if(dueAmount == null)
+            if (dueAmount == null)
             {
                 return BadRequest("Invalid registration number.");
             }
@@ -67,3 +65,4 @@ namespace ParkingSystem.Server.Controllers
         }
     }
 }
+

@@ -1,7 +1,9 @@
 ﻿using ParkingSystem.Common;
+using ParkingSystem.Common.Responses;
 using ParkingSystem.Common.Utils;
 using ParkingSystem.Data;
 using ParkingSystem.Data.Models;
+using ParkingSystem.Models.Categories;
 using ParkingSystem.Models.Vehicles;
 using ParkingSystem.Services.Interfaces;
 using System;
@@ -19,13 +21,26 @@ namespace ParkingSystem.Services
             this.data = data;
         }
 
-        public int? EnterParking(int categoryId, int? discountId, string registrationNumber)
+        public ApiResponse EnterParking(int categoryId, int? discountId, string registrationNumber)
         {
-            bool hasParkingSpacesAvailable = ValidateVehicleData(categoryId);
-            if (!hasParkingSpacesAvailable)
+            Category vehicleCategory = this.data.Categories.FirstOrDefault(a => a.CategoryId == categoryId);
+            if (vehicleCategory == null)
             {
-                return null;
+                return new ApiResponse(400, "Category does not exist.");
             }
+            var groupedVehicles = this.data.Vehicles.ToList().GroupBy(a => a.CategoryId);
+            int occupiedParkingSpacesAfterVehicleEnter = CalculationUtilities.CalculateOccupiedParkingSpaces(this.data.Categories, groupedVehicles) + vehicleCategory.ParkingSpaces;
+            if (occupiedParkingSpacesAfterVehicleEnter + vehicleCategory.ParkingSpaces > Constants.TOTAL_PARKING_SPACES)
+            {
+                return new ApiResponse(400, "No free parking space.");
+            }
+
+            Discount vehicleDiscount = this.data.Discounts.FirstOrDefault(a => a.DiscountId == discountId);
+            if (discountId != null && vehicleDiscount == null)
+            {
+                return new ApiResponse(400, "Discount does not exist.");
+            }
+
             var vehicle = new Vehicle
             {
                 CategoryId = categoryId,
@@ -37,7 +52,7 @@ namespace ParkingSystem.Services
 
             this.data.Add(vehicle);
             this.data.SaveChanges();
-            return vehicle.VehicleId;
+            return new ApiOkResponse(vehicle, "Vehicle with registration number " + vehicle.RegistrationNumber + " entered the parking.");
         }
 
         public Decimal? ExitParking(string registrationNumber, DateTime exitParkingDate)
@@ -109,18 +124,6 @@ namespace ParkingSystem.Services
             }
 
             return vehicles;
-        }
-
-        protected bool ValidateVehicleData(int categoryId)
-        {
-            Category vehicleCategory = this.data.Categories.FirstOrDefault(a => a.CategoryId == categoryId);
-            var groupedVehicles = this.data.Vehicles.ToList().GroupBy(a => a.CategoryId);
-            int occupiedParkingSpacesAfterVehicleEnter = CalculationUtilities.CalculateOccupiedParkingSpaces(this.data.Categories, groupedVehicles) + vehicleCategory.ParkingSpaces;
-            if (occupiedParkingSpacesAfterVehicleEnter + vehicleCategory.ParkingSpaces > Constants.TOTAL_PARKING_SPACES)
-            {
-                return false;
-            }
-            return true;
         }
     }
 }
