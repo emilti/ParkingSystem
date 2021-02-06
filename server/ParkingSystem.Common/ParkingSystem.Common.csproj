@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ParkingSystem.Data\ParkingSystem.Data.csproj" />
+    <ProjectReference Include="..\ParkingSystem.Models\ParkingSystem.Models.csproj" />
   </ItemGroup>
 
 </Project>

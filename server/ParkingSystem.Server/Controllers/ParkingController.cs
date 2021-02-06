@@ -3,6 +3,7 @@ using ParkingSystem.Common.Responses;
 using ParkingSystem.Models.Vehicles;
 using ParkingSystem.Server.Infrastructure.Filters;
 using ParkingSystem.Server.Models.Vehicles;
+using ParkingSystem.Server.Validators;
 using ParkingSystem.Services.Interfaces;
 using System;
 
@@ -12,26 +13,36 @@ namespace ParkingSystem.Server.Controllers
     [Route("[controller]")]
     public class ParkingController : ControllerBase
     {
-        public IVehicleService VehicleService;
-        public ParkingController(IVehicleService vehicleService)
+        public readonly IVehicleService vehicleService;
+        public readonly ICategoryService categoryService;
+        public readonly IDiscountService discountService;
+        public ParkingController(IVehicleService vehicleService, ICategoryService categoryService, IDiscountService discountService)
         {
-            VehicleService = vehicleService;
+            this.vehicleService = vehicleService;
+            this.categoryService = categoryService;
+            this.discountService = discountService;
         }
 
         [HttpGet]
         [Route("[action]")]
         public IActionResult GetАvailableSpaces()
         {
-            return this.Ok("Available parking spaces: " + VehicleService.GetAvailableSpaces());
+            return this.Ok("Available parking spaces: " + vehicleService.GetAvailableSpaces());
         }
 
 
         [HttpPost]
         [Route("[action]")]
         [GlobalModelStateValidatorAttribute]
-        public IActionResult Enter(VehicleEnterModel vehicle)
+        public IActionResult Enter(SaveVehicleResource vehicle)
         {
-            ApiResponse response = VehicleService.EnterParking(vehicle.CategoryId, vehicle.DiscountId, vehicle.RegistrationNumber);
+            var validator = new SaveVehicleResourceValidator(vehicleService, categoryService, discountService);
+            var validationResult = validator.Validate(vehicle);
+            if (!validationResult.IsValid)
+            {
+                return new BadRequestObjectResult(validationResult.Errors);
+            }
+            ApiResponse response = vehicleService.SaveVehicle(vehicle.CategoryId, vehicle.DiscountId, vehicle.RegistrationNumber);
             return new JsonResult(response.Message);
         }
 
@@ -39,7 +50,7 @@ namespace ParkingSystem.Server.Controllers
         [Route("[action]")]
         public IActionResult Exit(VehicleExitModel vehicle)
         {
-            Decimal? dueAmount = VehicleService.ExitParking(vehicle.RegistrationNumber, DateTime.Now);
+            Decimal? dueAmount = vehicleService.ExitParking(vehicle.RegistrationNumber, DateTime.Now);
             if (dueAmount == null)
             {
                 return BadRequest("Invalid registration number.");
@@ -51,8 +62,8 @@ namespace ParkingSystem.Server.Controllers
         [Route("[action]")]
         public IActionResult GetDueAmount(string registrationNumber)
         {
-            VehicleInfoModel vehicleInfoModel = VehicleService.GetVehicleByRegistrationNumber(registrationNumber);
-            decimal? dueAmount = VehicleService.CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
+            VehicleInfoModel vehicleInfoModel = vehicleService.GetVehicleByRegistrationNumber(registrationNumber);
+            decimal? dueAmount = vehicleService.CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
             return Ok(dueAmount);
         }
 
@@ -60,7 +71,7 @@ namespace ParkingSystem.Server.Controllers
         [Route("[action]")]
         public IActionResult GetVehicles()
         {
-            var vehicles = VehicleService.GetVehicles();
+            var vehicles = vehicleService.GetVehicles();
             return Ok(vehicles);
         }
     }

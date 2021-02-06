@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ParkingSystem.Server.Models.Vehicles
 {
-    public class VehicleEnterModel
+    public class SaveVehicleResource
     {
         public int CategoryId { get; set; }
         public int? DiscountId { get; set; }

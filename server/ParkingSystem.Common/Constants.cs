@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ParkingSystem.Common
+﻿namespace ParkingSystem.Common
 {
     public class Constants
     {

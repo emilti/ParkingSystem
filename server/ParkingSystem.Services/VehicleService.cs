@@ -15,31 +15,17 @@ namespace ParkingSystem.Services
     public class VehicleService : IVehicleService
     {
         private readonly ParkingSystemDbContext data;
+        public readonly ICategoryService categoryService;
 
-        public VehicleService(ParkingSystemDbContext data)
+        public VehicleService(ParkingSystemDbContext data, ICategoryService categoryService)
         {
             this.data = data;
+            this.categoryService = categoryService;
         }
 
-        public ApiResponse EnterParking(int categoryId, int? discountId, string registrationNumber)
+        public ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber)
         {
-            Category vehicleCategory = this.data.Categories.FirstOrDefault(a => a.CategoryId == categoryId);
-            if (vehicleCategory == null)
-            {
-                return new ApiResponse(400, "Category does not exist.");
-            }
-            var groupedVehicles = this.data.Vehicles.ToList().GroupBy(a => a.CategoryId);
-            int occupiedParkingSpacesAfterVehicleEnter = CalculationUtilities.CalculateOccupiedParkingSpaces(this.data.Categories, groupedVehicles) + vehicleCategory.ParkingSpaces;
-            if (occupiedParkingSpacesAfterVehicleEnter + vehicleCategory.ParkingSpaces > Constants.TOTAL_PARKING_SPACES)
-            {
-                return new ApiResponse(400, "No free parking space.");
-            }
-
-            Discount vehicleDiscount = this.data.Discounts.FirstOrDefault(a => a.DiscountId == discountId);
-            if (discountId != null && vehicleDiscount == null)
-            {
-                return new ApiResponse(400, "Discount does not exist.");
-            }
+            
 
             var vehicle = new Vehicle
             {
@@ -110,8 +96,8 @@ namespace ParkingSystem.Services
 
         public int GetAvailableSpaces()
         {
-            var groupedVehicles = this.data.Vehicles.Where(a => a.IsInParking == true).ToList().GroupBy(a => a.CategoryId);
-            int occupiedParkingSpaces = CalculationUtilities.CalculateOccupiedParkingSpaces(this.data.Categories, groupedVehicles);
+            var groupedVehicles = this.data.Vehicles.Where(a => a.IsInParking == true).ToList().Select(a => new VehicleInfoModel() { CategoryId = a.CategoryId , RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId , EnterParkingDate = a.EnterParkingDate }).GroupBy(a => a.CategoryId);
+            int occupiedParkingSpaces = CalculationUtilities.CalculateOccupiedParkingSpaces(this.categoryService.GetCategories(), groupedVehicles);
             return Constants.TOTAL_PARKING_SPACES - occupiedParkingSpaces;
         }
 
@@ -124,6 +110,11 @@ namespace ParkingSystem.Services
             }
 
             return vehicles;
+        }
+
+        public List<VehicleInfoModel> GetVehiclesInParking()
+        {
+            return this.data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoModel() { RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate }).ToList();
         }
     }
 }

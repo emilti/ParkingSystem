@@ -30,6 +30,8 @@ namespace ParkingSystem.Server
             services.AddControllers();
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddTransient<IVehicleService, VehicleService>();
+            services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<IDiscountService, DiscountService>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
         }
 

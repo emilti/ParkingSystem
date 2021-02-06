@@ -1,4 +1,6 @@
 ﻿using ParkingSystem.Data.Models;
+using ParkingSystem.Models.Categories;
+using ParkingSystem.Models.Vehicles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ namespace ParkingSystem.Common.Utils
 {
     public static class CalculationUtilities
     {
-        public static int CalculateOccupiedParkingSpaces(IEnumerable<Category> categories, IEnumerable<IGrouping<int, Vehicle>> groupedVehicles)
+        public static int CalculateOccupiedParkingSpaces(IEnumerable<CategoryInfo> categories, IEnumerable<IGrouping<int, VehicleInfoModel>> groupedVehicles)
         {
             int occupiedParkingSpaces = 0;
             foreach (var vehiclesGroup in groupedVehicles)
