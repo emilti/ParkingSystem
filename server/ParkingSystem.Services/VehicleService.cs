@@ -25,8 +25,6 @@ namespace ParkingSystem.Services
 
         public ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber)
         {
-            
-
             var vehicle = new Vehicle
             {
                 CategoryId = categoryId,
@@ -41,19 +39,14 @@ namespace ParkingSystem.Services
             return new ApiOkResponse(vehicle, "Vehicle with registration number " + vehicle.RegistrationNumber + " entered the parking.");
         }
 
-        public Decimal? ExitParking(string registrationNumber, DateTime exitParkingDate)
+        public ApiResponse? SoftDeleteVehicle(string registrationNumber, DateTime exitParkingDate)
         {
-            var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
-            Decimal? dueAmount = CalculateDueAmount(vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, exitParkingDate);
-            if (dueAmount != null)
-            {
-                vehicle.IsInParking = false;
-                vehicle.ExitParkingDate = exitParkingDate;
-                this.data.SaveChanges();
-                return dueAmount;
-            }
-
-            return null;
+            Vehicle vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
+            vehicle.IsInParking = false;
+            vehicle.ExitParkingDate = exitParkingDate;
+            this.data.SaveChanges();
+            Decimal? dueAmount = this.CalculateDueAmount(vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, exitParkingDate);
+            return new ApiOkResponse(vehicle, "Vehicle with registration number " + vehicle.RegistrationNumber + " exit the parking. Amount due: " + dueAmount);
         }
 
         public VehicleInfoModel GetVehicleByRegistrationNumber(string registrationNumber)
@@ -116,5 +109,11 @@ namespace ParkingSystem.Services
         {
             return this.data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoModel() { RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate }).ToList();
         }
+
+        //public VehicleInfoModel GetVehicleByRegistrationNumber(string registrationNumber)
+        //{
+        //    var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
+        //    return new VehicleInfoModel() { RegistrationNumber = vehicle.RegistrationNumber, DiscountId = vehicle.DiscountId, CategoryId = vehicle.CategoryId, EnterParkingDate = vehicle.EnterParkingDate };
+        //}
     }
 }

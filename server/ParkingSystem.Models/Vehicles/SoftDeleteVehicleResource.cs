@@ -1,6 +1,6 @@
 ﻿namespace ParkingSystem.Models.Vehicles
 {
-    public class VehicleExitModel
+    public class SoftDeleteVehicleResource
     {
         public string RegistrationNumber { get; set; }
     }

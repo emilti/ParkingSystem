@@ -48,14 +48,17 @@ namespace ParkingSystem.Server.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public IActionResult Exit(VehicleExitModel vehicle)
+        public IActionResult Exit(SoftDeleteVehicleResource vehicle)
         {
-            Decimal? dueAmount = vehicleService.ExitParking(vehicle.RegistrationNumber, DateTime.Now);
-            if (dueAmount == null)
+            var validator = new SoftDeleteResourceValidator(vehicleService);
+            var validationResult = validator.Validate(vehicle);
+            if (!validationResult.IsValid)
             {
-                return BadRequest("Invalid registration number.");
+                return new BadRequestObjectResult(validationResult.Errors);
             }
-            return Ok(dueAmount);
+           
+            var response = vehicleService.SoftDeleteVehicle(vehicle.RegistrationNumber, DateTime.Now);
+            return new JsonResult(response.Message);
         }
 
         [HttpGet]
