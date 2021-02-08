@@ -26,12 +26,11 @@ namespace ParkingSystem.Server.Validators
             RuleFor(m => m.RegistrationNumber)
                 .NotEmpty()
                 .WithMessage("'Registration number' is mandatory.");
-            RuleFor(x => x.CategoryId).NotNull()
-              .Must(ValidateCategory).WithMessage("Enter Valid Category.");
-            RuleFor(x => x.CategoryId).NotNull()
-            .Must(ValidateFreeParkingSpaces).WithMessage("No free parking space.");
+            RuleFor(x => x.CategoryId).Cascade(CascadeMode.Stop).NotNull()
+                .Must(ValidateCategory).WithMessage("Enter Valid Category.")
+                .Must(ValidateFreeParkingSpaces).WithMessage("No free parking space.");
             RuleFor(x => x.DiscountId)
-            .Must(ValidateDiscount).WithMessage("Enter Valid Discount.");
+                .Must(ValidateDiscount).WithMessage("Enter Valid Discount.");
         }
 
 

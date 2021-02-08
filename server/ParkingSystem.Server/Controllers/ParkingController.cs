@@ -36,12 +36,6 @@ namespace ParkingSystem.Server.Controllers
         [GlobalModelStateValidatorAttribute]
         public IActionResult Enter(SaveVehicleResource vehicle)
         {
-            var validator = new SaveVehicleResourceValidator(vehicleService, categoryService, discountService);
-            var validationResult = validator.Validate(vehicle);
-            if (!validationResult.IsValid)
-            {
-                return new BadRequestObjectResult(validationResult.Errors);
-            }
             ApiResponse response = vehicleService.SaveVehicle(vehicle.CategoryId, vehicle.DiscountId, vehicle.RegistrationNumber);
             return new JsonResult(response.Message);
         }
@@ -50,13 +44,6 @@ namespace ParkingSystem.Server.Controllers
         [Route("[action]")]
         public IActionResult Exit(SoftDeleteVehicleResource vehicle)
         {
-            var validator = new SoftDeleteResourceValidator(vehicleService);
-            var validationResult = validator.Validate(vehicle);
-            if (!validationResult.IsValid)
-            {
-                return new BadRequestObjectResult(validationResult.Errors);
-            }
-           
             var response = vehicleService.SoftDeleteVehicle(vehicle.RegistrationNumber, DateTime.Now);
             return new JsonResult(response.Message);
         }

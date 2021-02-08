@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using GlobalErrorHandling.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ParkingSystem.Data;
 using ParkingSystem.Server.Infrastructure;
+using ParkingSystem.Server.Validators;
 using ParkingSystem.Services;
 using ParkingSystem.Services.Interfaces;
 
@@ -27,7 +29,9 @@ namespace ParkingSystem.Server
         {
             services.AddDbContext<ParkingSystemDbContext>(
                 x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddControllers();
+            services.AddControllers()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SaveVehicleResourceValidator>())
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SoftDeleteResourceValidator>()); ;
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddTransient<IVehicleService, VehicleService>();
             services.AddTransient<ICategoryService, CategoryService>();

@@ -21,7 +21,6 @@ namespace ParkingSystem.Server.Validators
             if (vehicle == null)
             {
                 return false;
-                //return new ApiBadRequestResponse("Vehicle is not in the parking");
             }
 
             return true;
