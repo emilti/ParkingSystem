@@ -109,5 +109,11 @@ namespace ParkingSystem.Services
         {
             return this.data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoModel() { RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate }).ToList();
         }
+
+        //public VehicleInfoModel GetVehicleByRegistrationNumber(string registrationNumber)
+        //{
+        //    var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
+        //    return new VehicleInfoModel() { RegistrationNumber = vehicle.RegistrationNumber, DiscountId = vehicle.DiscountId, CategoryId = vehicle.CategoryId, EnterParkingDate = vehicle.EnterParkingDate };
+        //}
     }
 }
