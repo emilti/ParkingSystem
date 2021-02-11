@@ -1,14 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ParkingSystem.Data.Models;
 using System;
 using System.Linq;
 
 namespace ParkingSystem.Data
 {
-    public class ParkingSystemDbContext : DbContext
+    public class ParkingSystemDbContext : IdentityDbContext<IdentityUser>
     {
 
-        public ParkingSystemDbContext(DbContextOptions<ParkingSystemDbContext> options)
+        public ParkingSystemDbContext(DbContextOptions options)
             : base(options)
         {
         }
@@ -20,6 +22,7 @@ namespace ParkingSystem.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
             builder
                 .Entity<Vehicle>()
                 .HasOne(a => a.Category)
