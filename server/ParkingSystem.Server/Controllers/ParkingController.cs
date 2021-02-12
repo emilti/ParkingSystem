@@ -4,7 +4,6 @@ using ParkingSystem.Common.Responses;
 using ParkingSystem.Models.Vehicles;
 using ParkingSystem.Server.Infrastructure.Filters;
 using ParkingSystem.Server.Models.Vehicles;
-using ParkingSystem.Server.Validators;
 using ParkingSystem.Services.Interfaces;
 using System;
 
