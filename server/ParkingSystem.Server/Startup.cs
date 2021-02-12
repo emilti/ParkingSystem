@@ -64,7 +64,6 @@ namespace ParkingSystem.Server
                 };
             });
 
-
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddTransient<IVehicleService, VehicleService>();
             services.AddTransient<ICategoryService, CategoryService>();
