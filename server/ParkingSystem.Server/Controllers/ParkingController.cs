@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using ParkingSystem.Common.Responses;
 using ParkingSystem.Models.Vehicles;
 using ParkingSystem.Server.Infrastructure.Filters;
@@ -37,7 +38,7 @@ namespace ParkingSystem.Server.Controllers
         public IActionResult Enter(SaveVehicleResource vehicle)
         {
             ApiResponse response = vehicleService.SaveVehicle(vehicle.CategoryId, vehicle.DiscountId, vehicle.RegistrationNumber);
-            return new JsonResult(response.Message);
+            return StatusCode(response.StatusCode, response.Message);
         }
 
         [HttpPost]
@@ -45,7 +46,7 @@ namespace ParkingSystem.Server.Controllers
         public IActionResult Exit(SoftDeleteVehicleResource vehicle)
         {
             var response = vehicleService.SoftDeleteVehicle(vehicle.RegistrationNumber, DateTime.Now);
-            return new JsonResult(response.Message);
+            return StatusCode(response.StatusCode, response.Message);
         }
 
         [HttpGet]
@@ -54,7 +55,7 @@ namespace ParkingSystem.Server.Controllers
         {
             VehicleInfoModel vehicleInfoModel = vehicleService.GetVehicleByRegistrationNumber(registrationNumber);
             decimal? dueAmount = vehicleService.CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
-            return Ok(dueAmount);
+            return StatusCode(StatusCodes.Status200OK, dueAmount);
         }
 
         [HttpGet]

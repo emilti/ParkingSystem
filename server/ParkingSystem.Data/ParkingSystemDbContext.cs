@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ParkingSystem.Data
 {
-    public class ParkingSystemDbContext : IdentityDbContext<IdentityUser>
+    public class ParkingSystemDbContext : IdentityDbContext<ApplicationUser>
     {
 
         public ParkingSystemDbContext(DbContextOptions options)
@@ -19,7 +19,7 @@ namespace ParkingSystem.Data
         public DbSet<Tarrif> Tarrifs { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Discount> Discounts { get; set; }
-
+        //public DbSet<ApplicationUser> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
