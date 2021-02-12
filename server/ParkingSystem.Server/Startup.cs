@@ -1,18 +1,23 @@
 using FluentValidation.AspNetCore;
 using GlobalErrorHandling.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using ParkingSystem.Data;
+using ParkingSystem.Data.Models;
 using ParkingSystem.Server.Infrastructure;
 using ParkingSystem.Server.Validators;
 using ParkingSystem.Services;
 using ParkingSystem.Services.Interfaces;
+using System.Text;
 
 namespace ParkingSystem.Server
 {
@@ -28,12 +33,39 @@ namespace ParkingSystem.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ParkingSystemDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ParkingSystemDbContext>();
             services.AddControllers()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SaveVehicleResourceValidator>())
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SoftDeleteResourceValidator>()); ;
+               .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SaveVehicleResourceValidator>())
+               .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SoftDeleteResourceValidator>());
+
+            services.AddDbContext<ParkingSystemDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ParkingSystemDbContext>().AddDefaultTokenProviders();
+           
+
+            // Adding Authentication  
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+
+            // Adding Jwt Bearer  
+            .AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["JWT:ValidAudience"],
+                    ValidIssuer = Configuration["JWT:ValidIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                };
+            });
+
+
+
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddTransient<IVehicleService, VehicleService>();
             services.AddTransient<ICategoryService, CategoryService>();
@@ -59,6 +91,7 @@ namespace ParkingSystem.Server
            
             app.ConfigureCustomExceptionMiddleware();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseCors(options => options
                 .AllowAnyOrigin()
