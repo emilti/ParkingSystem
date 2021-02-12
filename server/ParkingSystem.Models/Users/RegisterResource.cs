@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ParkingSystem.Server.Models
+namespace ParkingSystem.Models.Users
 {
-    public class RegisterModel
+    public class RegisterResource
     {
         [Required(ErrorMessage = "User Name is required")]
         public string Username { get; set; }
