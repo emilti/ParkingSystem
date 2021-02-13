@@ -89,7 +89,6 @@ namespace ParkingSystem.Server.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, new ApiResponse(400, "User creation failed! Please check user details and try again."));
 
             return StatusCode(StatusCodes.Status200OK, "User created successfully!");
-        
         }
 
         [HttpPost]
