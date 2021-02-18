@@ -10,10 +10,10 @@ namespace ParkingSystem.Services.Interfaces
     {
         int GetAvailableSpaces();
         ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber);
-        VehicleInfoModel GetVehicleByRegistrationNumber(string registrationNumber);
+        VehicleInfoResource GetVehicleByRegistrationNumber(string registrationNumber);
         ApiResponse? SoftDeleteVehicle(string registrationNumber, DateTime exitParkingDate);
         Decimal? CalculateDueAmount(int vehicleCategoryId, int? vehicleDiscountId, DateTime vehicleEnterParkingDate, DateTime currentDateTime);
-        List<VehicleInfoModel> GetVehicles();
-        List<VehicleInfoModel> GetVehiclesInParking();
+        List<VehicleInfoResource> GetVehicles();
+        List<VehicleInfoResource> GetVehiclesInParking();
     }
 }

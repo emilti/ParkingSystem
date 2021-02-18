@@ -52,7 +52,7 @@ namespace ParkingSystem.Server.Controllers
         [Route("[action]")]
         public IActionResult GetDueAmount(string registrationNumber)
         {
-            VehicleInfoModel vehicleInfoModel = vehicleService.GetVehicleByRegistrationNumber(registrationNumber);
+            VehicleInfoResource vehicleInfoModel = vehicleService.GetVehicleByRegistrationNumber(registrationNumber);
             decimal? dueAmount = vehicleService.CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
             return StatusCode(StatusCodes.Status200OK, dueAmount);
         }

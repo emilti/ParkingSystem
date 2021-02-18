@@ -20,10 +20,13 @@ class  Vehicles extends React.Component {
         const {
             vehicles
         } = this.state
-
        return vehicles.map(v => {
-            return (<div>
-                {v.registrationNumber}
+            return (<div key={v.id}>
+                <span>{v.registrationNumber} </span>
+                <span>{v.enterParkingDate} </span>
+                <span>{v.categoryName} </span>
+                <span>{v.discountPercentage} </span>
+                <span>{v.dueAmount}</span>
             </div>)
        })
     }
