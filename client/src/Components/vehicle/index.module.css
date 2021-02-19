@@ -1,0 +1,10 @@
+.row{
+    width:20%;
+    border-bottom: 1px solid black;
+    float: left;
+}
+
+.topRow{    
+    border-top: 1px solid black;
+}
+
