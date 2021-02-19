@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-
+import Vehicle from '../vehicle';
+import Styles from './index.module.css';
 class  Vehicles extends React.Component {
     constructor(props){
         super(props)
@@ -19,14 +20,10 @@ class  Vehicles extends React.Component {
     renderVehicles(){
         const {
             vehicles
-        } = this.state
-       return vehicles.map(v => {
-            return (<div key={v.id}>
-                <span>{v.registrationNumber} </span>
-                <span>{v.enterParkingDate} </span>
-                <span>{v.categoryName} </span>
-                <span>{v.discountPercentage} </span>
-                <span>{v.dueAmount}</span>
+        } = this.state        
+       return vehicles.map((v, index) => {
+            return (<div>
+                <Vehicle key={v.id} registrationNumber = {v.registrationNumber} enterParkingDate={v.enterParkingDate} categoryName={v.categoryName} discountPercentage={v.discountPercentage} dueAmount={v.dueAmount} index={index}/>
             </div>)
        })
     }
