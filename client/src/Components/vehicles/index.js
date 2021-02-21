@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Vehicle from '../vehicle';
-import Styles from './index.module.css';
+
 class  Vehicles extends React.Component {
     constructor(props){
         super(props)
