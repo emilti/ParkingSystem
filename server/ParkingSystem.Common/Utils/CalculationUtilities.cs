@@ -9,7 +9,7 @@ namespace ParkingSystem.Common.Utils
 {
     public static class CalculationUtilities
     {
-        public static int CalculateOccupiedParkingSpaces(IEnumerable<CategoryInfo> categories, IEnumerable<IGrouping<int, VehicleInfoModel>> groupedVehicles)
+        public static int CalculateOccupiedParkingSpaces(IEnumerable<CategoryInfo> categories, IEnumerable<IGrouping<int, VehicleInfoResource>> groupedVehicles)
         {
             int occupiedParkingSpaces = 0;
             foreach (var vehiclesGroup in groupedVehicles)

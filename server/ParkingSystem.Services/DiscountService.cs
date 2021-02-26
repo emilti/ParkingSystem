@@ -1,6 +1,7 @@
 ﻿using ParkingSystem.Data;
 using ParkingSystem.Models.Discounts;
 using ParkingSystem.Services.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ParkingSystem.Services
@@ -22,5 +23,11 @@ namespace ParkingSystem.Services
             }
             return null;
         }
+
+        public List<DiscountInfo> GetDiscounts()
+        {
+            return this.data.Discounts.Select(a => new DiscountInfo() { DiscountId = a.DiscountId, Name = a.Name, DiscountPercentage = a.DiscountPercentage }).ToList();
+        }
+
     }
 }

@@ -4,6 +4,7 @@ using ParkingSystem.Common.Utils;
 using ParkingSystem.Data;
 using ParkingSystem.Data.Models;
 using ParkingSystem.Models.Categories;
+using ParkingSystem.Models.Discounts;
 using ParkingSystem.Models.Vehicles;
 using ParkingSystem.Services.Interfaces;
 using System;
@@ -16,11 +17,13 @@ namespace ParkingSystem.Services
     {
         private readonly ParkingSystemDbContext data;
         public readonly ICategoryService categoryService;
+        public readonly IDiscountService discountService;
 
-        public VehicleService(ParkingSystemDbContext data, ICategoryService categoryService)
+        public VehicleService(ParkingSystemDbContext data, ICategoryService categoryService, IDiscountService discountService)
         {
             this.data = data;
             this.categoryService = categoryService;
+            this.discountService = discountService;
         }
 
         public ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber)
@@ -49,10 +52,10 @@ namespace ParkingSystem.Services
             return new ApiOkResponse(vehicle, "Vehicle with registration number " + vehicle.RegistrationNumber + " exit the parking. Amount due: " + dueAmount);
         }
 
-        public VehicleInfoModel GetVehicleByRegistrationNumber(string registrationNumber)
+        public VehicleInfoResource GetVehicleByRegistrationNumber(string registrationNumber)
         {
             var vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
-            VehicleInfoModel vehicleInfo = new VehicleInfoModel()
+            VehicleInfoResource vehicleInfo = new VehicleInfoResource()
             {
                 CategoryId = vehicle.CategoryId,
                 DiscountId = vehicle.DiscountId,
@@ -89,25 +92,36 @@ namespace ParkingSystem.Services
 
         public int GetAvailableSpaces()
         {
-            var groupedVehicles = this.data.Vehicles.Where(a => a.IsInParking == true).ToList().Select(a => new VehicleInfoModel() { CategoryId = a.CategoryId , RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId , EnterParkingDate = a.EnterParkingDate }).GroupBy(a => a.CategoryId);
+            var groupedVehicles = this.data.Vehicles.Where(a => a.IsInParking == true).ToList().Select(a => new VehicleInfoResource() { CategoryId = a.CategoryId , RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId , EnterParkingDate = a.EnterParkingDate }).GroupBy(a => a.CategoryId);
             int occupiedParkingSpaces = CalculationUtilities.CalculateOccupiedParkingSpaces(this.categoryService.GetCategories(), groupedVehicles);
             return Constants.TOTAL_PARKING_SPACES - occupiedParkingSpaces;
         }
 
-        public List<VehicleInfoModel> GetVehicles()
+        public List<VehicleInfoResource> GetVehicles()
         {
-            var vehicles = this.data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoModel() { RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate }).ToList();
+            var categories = this.categoryService.GetCategories();
+            var discounts = this.discountService.GetDiscounts();
+            var vehicles = data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoResource() { Id = a.VehicleId, RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate, CategoryName = GetCategoryName(a, categories), DiscountPercentage = GetDiscountPercentage(a, discounts) }).ToList();
             foreach (var vehicleInfoModel in vehicles)
             {
                 vehicleInfoModel.DueAmount = CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
             }
-
             return vehicles;
         }
 
-        public List<VehicleInfoModel> GetVehiclesInParking()
+        private static int? GetDiscountPercentage(Vehicle a, List<DiscountInfo> discounts)
         {
-            return this.data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoModel() { RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate }).ToList();
+            return discounts.FirstOrDefault(d => d.DiscountId == a.DiscountId)?.DiscountPercentage;
+        }
+
+        private static string GetCategoryName(Vehicle a, List<CategoryInfo> categories)
+        {
+            return categories.FirstOrDefault(bc => bc.CategoryId == a.CategoryId)?.Name;
+        }
+
+        public List<VehicleInfoResource> GetVehiclesInParking()
+        {
+            return this.data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoResource() { RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate }).ToList();
         }
     }
 }
