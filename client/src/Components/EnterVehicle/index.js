@@ -1,5 +1,10 @@
 import React, {Component} from 'react'
-
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Jumbotron from 'react-bootstrap/Jumbotron';
+import Input from '../Input'
 class EnterVehicle extends Component {
     constructor(props){
         super(props)
@@ -47,17 +52,12 @@ console.log(data)
                 const error = (data && data.message) || response.status;
                 return Promise.reject(error);
             }
-
-           
         })
         .catch(error => {
             this.setState({ errorMessage: error.toString() });
             console.error('There was an error!', error);
         });
     }
-
-
-   
 
     render(){
         const{
@@ -66,31 +66,23 @@ console.log(data)
             registrationNumber
         } = this.state
         return(
-        <div>
-            <div>Enter vehicle</div>
-            <form onSubmit={this.handleSubmit}>
-                <div>
-                    <label htmlFor="category">
-                        Category:
-                        <input value={categoryId} id="category" onChange={this.changeCategory}></input>
-                    </label>
-                </div>
-                <div>
-                    <label htmlFor="dicount">
-                        Discount:
-                        <input value={discountId} id="dicount" onChange={this.changeDiscount}></input>
-                    </label>
-                </div>
-                <div>
-                    <label htmlFor="registrationNumber">
-                        Registration number:
-                        <input value={registrationNumber} id="registrationNumber"  onChange={this.changeRegistrationNumber}></input>
-                    </label>
-                </div>
-                <button type="submit">Enter vehicle</button>
-            </form>
-        
-        </div>)
+            <Container>  
+                <Row>
+                    <Col></Col>
+                    <Col md={8}>
+                        <Jumbotron>
+                            <form onSubmit={this.handleSubmit}>
+                                <Input field="Category" value={categoryId} onChange={this.changeCategory}></Input>
+                                <Input field="Dicount" value={discountId} onChange={this.changeDiscount}></Input>
+                                <Input field="Registration Number" value={registrationNumber} onChange={this.changeRegistrationNumber}></Input>
+                                <Button variant="success" type="submit">Enter vehicle</Button>
+                            </form>
+                        </Jumbotron>
+                    </Col>
+                    <Col></Col>
+                </Row>
+            </Container>
+      )
     }
 
     
