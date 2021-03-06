@@ -4,15 +4,47 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Jumbotron from 'react-bootstrap/Jumbotron';
-import Input from '../Input'
+import Input from '../Input';
+import SingleSelectDropdown from '../SingleSelectDropdown';
+
 class EnterVehicle extends Component {
     constructor(props){
         super(props)
         this.state = {
+            categories: [],
+            discounts: [],
             categoryId: '',
             discountId: '',
             registrationNumber: ''
         }
+    }
+
+    getCategories = async() => {
+        const promise = await fetch('http://localhost:57740/parking/getcategories')
+        const categories = await promise.json()
+        const options = categories.map(c => ({
+          "value" : c.categoryId,
+          "label" : c.name + " (Occupied spaces: " + c.parkingSpaces + ")"
+        }))
+        this.setState({categories: options})
+        console.log(this.state.categories)
+    }
+
+    getDiscounts = async() => {
+        const promise = await fetch('http://localhost:57740/parking/getdiscounts')
+        const discounts = await promise.json()
+        console.log(discounts)
+        const options = discounts.map(d => ({
+          "value" : d.discountId,
+          "label" : d.name + " " + d.discountPercentage + "%"
+        }))
+        this.setState({discounts: options})
+        console.log(this.state.discounts)
+    }
+
+    componentDidMount(){
+        this.getCategories()
+        this.getDiscounts()
     }
 
     changeCategory = event => {
@@ -45,7 +77,6 @@ class EnterVehicle extends Component {
         fetch('http://localhost:57740/parking/enter', requestOptions)
         .then(async response => {
             const data = await response.json();
-console.log(data)
             // check for error response
             if (!response.ok) {
                 // get error message from body or default to response status
@@ -72,8 +103,8 @@ console.log(data)
                     <Col md={8}>
                         <Jumbotron>
                             <form onSubmit={this.handleSubmit}>
-                                <Input field="Category" value={categoryId} onChange={this.changeCategory}></Input>
-                                <Input field="Dicount" value={discountId} onChange={this.changeDiscount}></Input>
+                                <SingleSelectDropdown field="Category" options={this.state.categories} onChange={this.changeCategory}/>
+                                <SingleSelectDropdown field="Discount" options={this.state.discounts} onChange={this.changeDiscount}/>
                                 <Input field="Registration Number" value={registrationNumber} onChange={this.changeRegistrationNumber}></Input>
                                 <Button variant="success" type="submit">Enter vehicle</Button>
                             </form>

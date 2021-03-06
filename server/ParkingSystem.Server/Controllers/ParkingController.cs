@@ -64,6 +64,23 @@ namespace ParkingSystem.Server.Controllers
             var vehicles = vehicleService.GetVehicles();
             return Ok(vehicles);
         }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult GetCategories()
+        {
+            var categories = categoryService.GetCategories();
+            return Ok(categories);
+        }
+
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult GetDiscounts()
+        {
+            var discounts = discountService.GetDiscounts();
+            return Ok(discounts);
+        }
     }
 }
 
