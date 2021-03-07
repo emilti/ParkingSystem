@@ -15,7 +15,16 @@ class EnterVehicle extends Component {
             discounts: [],
             categoryId: '',
             discountId: '',
-            registrationNumber: ''
+            registrationNumber: '',
+            registrationNumberError: ''
+        }
+    }
+
+    validateRegistrationNumber = event => {
+        if(event.target.value === ''){
+            this.setState({ registrationNumberError: "Invalid registration number." })
+        } else {
+            this.setState({ registrationNumberError: "" })
         }
     }
 
@@ -26,7 +35,7 @@ class EnterVehicle extends Component {
           "value" : c.categoryId,
           "label" : c.name + " (Occupied spaces: " + c.parkingSpaces + ")"
         }))
-        this.setState({categories: options})
+        this.setState({ categories: options })
         console.log(this.state.categories)
     }
 
@@ -38,7 +47,7 @@ class EnterVehicle extends Component {
           "value" : d.discountId,
           "label" : d.name + " " + d.discountPercentage + "%"
         }))
-        this.setState({discounts: options})
+        this.setState({ discounts: options })
         console.log(this.state.discounts)
     }
 
@@ -94,18 +103,20 @@ class EnterVehicle extends Component {
         const{
             categoryId,
             discountId,
-            registrationNumber
+            registrationNumber,
+            registrationNumberError
         } = this.state
         return(
             <Container>  
                 <Row>
                     <Col></Col>
-                    <Col md={8}>
+                    <Col md={ 8 }>
                         <Jumbotron>
-                            <form onSubmit={this.handleSubmit}>
-                                <SingleSelectDropdown field="Category" options={this.state.categories} onChange={this.changeCategory}/>
-                                <SingleSelectDropdown field="Discount" options={this.state.discounts} onChange={this.changeDiscount}/>
-                                <Input field="Registration Number" value={registrationNumber} onChange={this.changeRegistrationNumber}></Input>
+                            <form onSubmit={ this.handleSubmit }>
+                                <Input field="Registration Number" onBlur={ this.validateRegistrationNumber } value={ registrationNumber } onChange={ this.changeRegistrationNumber } error={ registrationNumberError }></Input>
+                                {/* {registrationNumberError !== "" ? registrationNumberError : ""} */}
+                                <SingleSelectDropdown field="Category" options={ this.state.categories } onChange={ this.changeCategory }/>
+                                <SingleSelectDropdown field="Discount" options={ this.state.discounts } onChange={ this.changeDiscount }/>
                                 <Button variant="success" type="submit">Enter vehicle</Button>
                             </form>
                         </Jumbotron>
