@@ -4,7 +4,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 const Input = ({ field, value, onChange, onBlur, error }) => {
-    console.log("reg number: " +value + "   " + "error: " + error )
     return (
         <Form>
             <Form.Group as={ Row } controlId={ field }>

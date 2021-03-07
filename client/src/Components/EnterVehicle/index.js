@@ -31,24 +31,24 @@ class EnterVehicle extends Component {
     getCategories = async() => {
         const promise = await fetch('http://localhost:57740/parking/getcategories')
         const categories = await promise.json()
-        const options = categories.map(c => ({
+        let options = categories.map(c => ({
           "value" : c.categoryId,
           "label" : c.name + " (Occupied spaces: " + c.parkingSpaces + ")"
         }))
+        options.splice(0, 0, {"value": "", "label": "Select category" })
         this.setState({ categories: options })
-        console.log(this.state.categories)
     }
 
     getDiscounts = async() => {
         const promise = await fetch('http://localhost:57740/parking/getdiscounts')
         const discounts = await promise.json()
-        console.log(discounts)
-        const options = discounts.map(d => ({
+        let options = [];
+        options = discounts.map(d => ({
           "value" : d.discountId,
           "label" : d.name + " " + d.discountPercentage + "%"
         }))
+        options.splice(0, 0, {"value": "", "label": "Select discount" })
         this.setState({ discounts: options })
-        console.log(this.state.discounts)
     }
 
     componentDidMount(){
@@ -85,12 +85,17 @@ class EnterVehicle extends Component {
         event.preventDefault();
         fetch('http://localhost:57740/parking/enter', requestOptions)
         .then(async response => {
-            const data = await response.json();
-            // check for error response
             if (!response.ok) {
                 // get error message from body or default to response status
-                const error = (data && data.message) || response.status;
+                const error = response.status;
                 return Promise.reject(error);
+            }
+            if(response.ok){
+                this.setState({
+                    registrationNumberError: '',
+                    categoryId: '',
+                    discountId: ''
+                })
             }
         })
         .catch(error => {
@@ -114,7 +119,6 @@ class EnterVehicle extends Component {
                         <Jumbotron>
                             <form onSubmit={ this.handleSubmit }>
                                 <Input field="Registration Number" onBlur={ this.validateRegistrationNumber } value={ registrationNumber } onChange={ this.changeRegistrationNumber } error={ registrationNumberError }></Input>
-                                {/* {registrationNumberError !== "" ? registrationNumberError : ""} */}
                                 <SingleSelectDropdown field="Category" options={ this.state.categories } onChange={ this.changeCategory }/>
                                 <SingleSelectDropdown field="Discount" options={ this.state.discounts } onChange={ this.changeDiscount }/>
                                 <Button variant="success" type="submit">Enter vehicle</Button>
