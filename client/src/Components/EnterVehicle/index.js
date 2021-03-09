@@ -31,6 +31,7 @@ class EnterVehicle extends Component {
     getCategories = async() => {
         const promise = await fetch('http://localhost:57740/parking/getcategories')
         const categories = await promise.json()
+        console.log(categories)
         let options = categories.map(c => ({
           "value" : c.categoryId,
           "label" : c.name + " (Occupied spaces: " + c.parkingSpaces + ")"
@@ -118,7 +119,7 @@ class EnterVehicle extends Component {
                     <Col md={ 8 }>
                         <Jumbotron>
                             <form onSubmit={ this.handleSubmit }>
-                                <Input field="Registration Number" onBlur={ this.validateRegistrationNumber } value={ registrationNumber } onChange={ this.changeRegistrationNumber } error={ registrationNumberError }></Input>
+                                <Input field="Registration Number" type="text" onBlur={ this.validateRegistrationNumber } value={ registrationNumber } onChange={ this.changeRegistrationNumber } error={ registrationNumberError }></Input>
                                 <SingleSelectDropdown field="Category" options={ this.state.categories } onChange={ this.changeCategory }/>
                                 <SingleSelectDropdown field="Discount" options={ this.state.discounts } onChange={ this.changeDiscount }/>
                                 <Button variant="success" type="submit">Enter vehicle</Button>
