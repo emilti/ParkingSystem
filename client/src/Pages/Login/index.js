@@ -1,4 +1,5 @@
-import React, {Component} from 'react'
+import React, { useState, useContext } from 'react'
+import { useHistory } from "react-router-dom"
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -6,35 +7,15 @@ import Jumbotron from 'react-bootstrap/Jumbotron'
 import Input from '../../Components/Input'
 import Button from 'react-bootstrap/Button'
 
-class Login extends Component {
-    constructor(props){
-        super(props)
-        this.state = {
-            username: '',
-            password: '',
-            usernameError: '',
-            passwordError: ''
-       }
-    }
+const Login = () => {
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [usernameError, setUsernameError] = useState('')
+    const [passwordError, setPasswordError] = useState('')
+    const history = useHistory()
 
-    changeUsername = event => {
-        this.setState({
-            username: event.target.value
-       })
-    }
-
-    changePassword = event => {
-        this.setState({
-            password: event.target.value
-       })
-   }
-
-    handleSubmit = async(event) => {
+    const handleSubmit = async(event) => {
         event.preventDefault()
-        const {
-            username,
-            password
-        } = this.state
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -44,25 +25,18 @@ class Login extends Component {
         const result = await promise.json()
         const authToken = result['token']
         document.cookie = `x-auth-token=${authToken}`
-        this.props.history.push("/");
+        history.push('/')
     }
 
-
-    render (){
-         const {
-            username,
-            password,
-            usernameError,
-            passwordError
-        } = this.state
-        return (<Container>
+    return (
+      <Container>
             <Row>
                 <Col></Col>
                 <Col md={8}>
                     <Jumbotron>
-                        <form onSubmit={this.handleSubmit}>
-                            <Input field="Username" type="text" value={username} onChange={this.changeUsername} error={usernameError}></Input>
-                            <Input  field="Password" type='password' value={password} onChange={this.changePassword} error={passwordError}></Input>
+                        <form onSubmit={handleSubmit}>
+                            <Input field="Username" type="text" value={username} onChange={e => setUsername(e.target.value)}></Input>
+                            <Input  field="Password" type='password' value={password} onChange={e => setPassword(e.target.value)} error={passwordError}></Input>
                             <Button variant="success" type="submit">Login</Button>
                         </form>
                     </Jumbotron>
@@ -70,7 +44,7 @@ class Login extends Component {
                 <Col></Col>
             </Row>
         </Container>)
-    }
+    
 }
 
 export default Login
