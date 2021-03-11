@@ -57,7 +57,6 @@ const Login = () => {
                 <Col></Col>
             </Row>
         </Container>)
-    
 }
 
 export default Login

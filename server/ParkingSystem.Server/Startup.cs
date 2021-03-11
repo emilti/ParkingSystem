@@ -39,7 +39,15 @@ namespace ParkingSystem.Server
 
             services.AddDbContext<ParkingSystemDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ParkingSystemDbContext>().AddDefaultTokenProviders();
-           
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = false;
+            });
 
             // Adding Authentication  
             services.AddAuthentication(options =>
