@@ -21,11 +21,24 @@ const Login = () => {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"username": username, "password": password})
         };
-        const promise = await fetch('http://localhost:57740/authenticate/login', requestOptions)
-        const result = await promise.json()
-        const authToken = result['token']
-        document.cookie = `x-auth-token=${authToken}`
-        history.push('/')
+        fetch('http://localhost:57740/authenticate/login', requestOptions).then((response) => {
+            if (response.ok) {
+                response.json().then((responseJson) => {
+                    console.log(responseJson)
+                    const authToken = responseJson['token']
+                    document.cookie = `x-auth-token=${authToken}`
+                    history.push('/')
+                  })
+            } else if(response.status === 401) {
+                throw new Error('Invalid username or password.');
+            } else{
+                throw new Error('Something went wrong!');
+            }
+          })
+          .catch((error) => {
+                setPasswordError("Invalid username or password.")
+          });
+       
     }
 
     return (
