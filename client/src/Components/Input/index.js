@@ -1,21 +1,23 @@
-import React, { Component } from 'react'
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import React, {Component} from 'react'
+import {Form, Row, Col, Alert} from 'react-bootstrap'
+import Styles from './index.module.css'
 
-const Input = ({ field, type, value, onChange, onBlur, error }) => {
+const Input = ({field, type, value, onChange, onBlur, error}) => {
     return (
-        <Form.Group as={ Row } controlId={ field }>
-                <Form.Label column sm={ 2 }>
-                { field }
+        
+        <Form.Group as={Row} controlId={field}>
+                <Form.Label column sm={2}>
+                {field}
                 </Form.Label>
-                <Col sm={ 10 }>
-                <Form.Control type={type} value={ value } onChange={ onChange } onBlur={ onBlur } isInvalid={ !!error }/>
+                <Col sm={10}>
+                    <Form.Control type={type} value={value} onChange={onChange} onBlur={onBlur} isInvalid={!!error}/>
                 </Col>
-                <div class="text-danger">
-                    <small>{error}</small>
-                </div>
+               <Form.Control.Feedback type='invalid' className={Styles.errorMessage}>
+                    {error}
+                </Form.Control.Feedback>
             </Form.Group>
+           
+           
     )
 }
 export default Input

@@ -76,7 +76,7 @@ namespace ParkingSystem.Server.Controllers
         {
             var userExists = await userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status400BadRequest, new ApiResponse(400 , "User already exists!"));
+                return StatusCode(StatusCodes.Status409Conflict, new ApiResponse(409 , "User already exists!"));
 
             ApplicationUser user = new ApplicationUser()
             {

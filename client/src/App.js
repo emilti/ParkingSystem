@@ -4,6 +4,7 @@ import Navigation from './Components/Navigation'
 import HomePage from './Pages/Home'
 import EnterVehiclePage from './Pages/EnterVehicle'
 import LoginPage from './Pages/Login'
+import RegisterPage from './Pages/Register'
 import {
   BrowserRouter,
     Switch,
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/" exact component={HomePage}/>
                     <Route path="/EnterVehicle" component={EnterVehiclePage}/>
                     <Route path="/Login" component={LoginPage}/>
+                    <Route path="/Register" component={RegisterPage}/>
                 </Switch>
       </BrowserRouter>
     </div>
