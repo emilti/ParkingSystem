@@ -47,11 +47,18 @@ const Register = () => {
           .catch((error) => {
                 setPasswordError("Invalid username or password.")
           });
-       
+    }
+
+    const validateUsername = (e) => {
+        if(!e.target.value){
+            setUsernameError("Username field is required.")
+        } else {
+            setUsernameError("")
+            setUsername(e.target.value)
+        }
     }
 
     const validateEmail = (e) => {
-        console.log(e)
         const emailRegex = /^\S+@\S+\.\S+$/;
         if(!e.target.value){
             setEmailError("Email field is required.")
@@ -63,11 +70,24 @@ const Register = () => {
         }
     }
 
+    const validatePassword = (e) => {
+        if(!e.target.value){
+            setPasswordError("Password field is required.")
+        } else {
+            setPasswordError("")
+            setPassword(e.target.value)
+        }
+    }
+
     const validatePasswordRepeat = (e) => {
-        if(e.target.value !== password){
+        if(!e.target.value){
+            setPasswordRepeatError("Password Repeat field is required.")
+        } else if(e.target.value !== password){
             setPasswordRepeatError("Does not match password.")
         } else{
             setPasswordRepeatError("")
+            setPasswordRepeat(e.target.value)
+
         }
     }
 
@@ -78,10 +98,10 @@ const Register = () => {
                 <Col md={8}>
                     <Jumbotron>
                         <form onSubmit={handleSubmit}>
-                            <Input field="Username" type="text" value={username}  onChange={e => setUsername(e.target.value)} error={usernameError}></Input>
+                            <Input field="Username" type="text" value={username}  onChange={e => setUsername(e.target.value)} onBlur={validateUsername} error={usernameError}></Input>
                             <Input field="Email" type="text" value={email} onChange={e => setEmail(e.target.value)} onBlur={validateEmail} error={emailError}></Input>
-                            <Input  field="Password" type='password' value={password} onChange={e => setPassword(e.target.value)} error={passwordError}></Input>
-                            <Input  field="Repeat Password" type='password' value={passwordRepeat} onChange={e => setPasswordRepeat(e.target.value)}  onBlur={validatePasswordRepeat} error={passwordRepeatError}></Input>
+                            <Input field="Password" type='password' value={password} onChange={e => setPassword(e.target.value)} onBlur={validatePassword} error={passwordError}></Input>
+                            <Input field="Repeat Password" type='password' value={passwordRepeat} onChange={e => setPasswordRepeat(e.target.value)}  onBlur={validatePasswordRepeat} error={passwordRepeatError}></Input>
                             <Row>
                                 <Col sm={{size: 8, order: 2, offset: 2}}>
                                     <p className={[Styles.passwordInfo]}>*Password must be at least 6 characters long, must contain at least one upper case letter and one digit.</p>
