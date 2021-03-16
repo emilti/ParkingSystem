@@ -10,6 +10,7 @@ using ParkingSystem.Server.Models;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,6 +50,7 @@ namespace ParkingSystem.Server.Controllers
                 foreach (var userRole in userRoles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                    authClaims.Add(new Claim(ClaimTypes.Name, user.UserName));
                 }
 
                 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -64,7 +66,8 @@ namespace ParkingSystem.Server.Controllers
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
+                    expiration = token.ValidTo,
+                    user = user.UserName
                 });
             }
             return Unauthorized();
@@ -121,6 +124,39 @@ namespace ParkingSystem.Server.Controllers
             }
 
             return Ok(new ApiOkResponse(null, "User created successfully!"));
+        }
+
+        [HttpPost]
+        [Route("verify")]
+        public async Task<IActionResult> Verify(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes((_configuration["JWT:Secret"]));
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                //var accountId = jwtToken.Id;
+                var user = jwtToken.Claims.First(a => a.Type == ClaimTypes.Name)?.Value;
+                var userExists = await userManager.FindByNameAsync(user);
+                // return account id from JWT token if validation successful
+                //Response.Headers.Add("User", userExists.UserName);
+                return Ok(new { username = userExists.UserName });
+            }
+            catch(Exception e)
+            {
+                // return null if validation fails
+                return null;
+            }
         }
     }
 }

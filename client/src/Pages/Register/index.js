@@ -6,7 +6,9 @@ import Col from 'react-bootstrap/Col'
 import Jumbotron from 'react-bootstrap/Jumbotron'
 import Input from '../../Components/Input'
 import Button from 'react-bootstrap/Button'
+import Menu from '../../Components/Menu'
 import Styles from './index.module.css'
+
 const Register = () => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -92,28 +94,32 @@ const Register = () => {
     }
 
     return (
-      <Container>
-            <Row>
-                <Col></Col>
-                <Col md={8}>
-                    <Jumbotron>
-                        <form onSubmit={handleSubmit}>
-                            <Input field="Username" type="text" value={username}  onChange={e => setUsername(e.target.value)} onBlur={validateUsername} error={usernameError}></Input>
-                            <Input field="Email" type="text" value={email} onChange={e => setEmail(e.target.value)} onBlur={validateEmail} error={emailError}></Input>
-                            <Input field="Password" type='password' value={password} onChange={e => setPassword(e.target.value)} onBlur={validatePassword} error={passwordError}></Input>
-                            <Input field="Repeat Password" type='password' value={passwordRepeat} onChange={e => setPasswordRepeat(e.target.value)}  onBlur={validatePasswordRepeat} error={passwordRepeatError}></Input>
-                            <Row>
-                                <Col sm={{size: 8, order: 2, offset: 2}}>
-                                    <p className={[Styles.passwordInfo]}>*Password must be at least 6 characters long, must contain at least one upper case letter and one digit.</p>
-                                </Col>
-                            </Row>
-                            <Button variant="success" type="submit">Register</Button>
-                        </form>
-                    </Jumbotron>
-                </Col>
-                <Col></Col>
-            </Row>
-        </Container>)
+        <div>
+            <Menu/>
+            <Container>
+                    <Row>
+                        <Col></Col>
+                        <Col md={8}>
+                            <Jumbotron>
+                                <form onSubmit={handleSubmit}>
+                                    <Input field="Username" type="text" value={username}  onChange={e => setUsername(e.target.value)} onBlur={validateUsername} error={usernameError}></Input>
+                                    <Input field="Email" type="text" value={email} onChange={e => setEmail(e.target.value)} onBlur={validateEmail} error={emailError}></Input>
+                                    <Input field="Password" type='password' value={password} onChange={e => setPassword(e.target.value)} onBlur={validatePassword} error={passwordError}></Input>
+                                    <Input field="Repeat Password" type='password' value={passwordRepeat} onChange={e => setPasswordRepeat(e.target.value)}  onBlur={validatePasswordRepeat} error={passwordRepeatError}></Input>
+                                    <Row>
+                                        <Col sm={{size: 8, order: 2, offset: 2}}>
+                                            <p className={[Styles.passwordInfo]}>*Password must be at least 6 characters long, must contain at least one upper case letter and one digit.</p>
+                                        </Col>
+                                    </Row>
+                                    <Button variant="success" type="submit">Register</Button>
+                                </form>
+                            </Jumbotron>
+                        </Col>
+                        <Col></Col>
+                    </Row>
+                </Container>
+            </div>)
+        
 }
 
 export default Register

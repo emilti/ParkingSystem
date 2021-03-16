@@ -1,10 +1,15 @@
 import React from 'react'
 import Vehicles from '../../Components/vehicles'
+import Menu from '../../Components/Menu'
 
 const Home = () => {
 
   return (
-      <Vehicles />
+      <div>
+        <Menu/>
+        <Vehicles />
+      </div>
+      
   )
 }
 
