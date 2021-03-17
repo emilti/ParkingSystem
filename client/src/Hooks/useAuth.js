@@ -1,46 +1,44 @@
 import { useState, useContext } from 'react';
-import context from 'react-bootstrap/esm/AccordionContext';
 import { useHistory } from 'react-router-dom';
-// import axios from 'axios';
 import { UserContext } from './UserContext';
 
 export default function useAuth() {
     let history = useHistory();
     const {user, setUser} = useContext(UserContext);
     const [error, setError] = useState(null);
-    //set user in context and push them home
-    // const setUserContext = async () => {
-    // return await axios.get('/user').then(res => {
-    //     setUser(res.data.currentUser);
-    //     history.push('/home');
-    //     }).catch((err) => {
-    //     setError(err.response.data);
-    //     })
-    // }
+   
+    const registerUser = async(data) => {
+        const { username, password, email , setUsernameError, setPasswordError } = data;
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"username": username, "email": email, "password": password})
+        };
+        fetch('http://localhost:57740/authenticate/register', requestOptions).then((response) => {
+            if (response.ok) {
+                    history.push('/login')
+            } else if(response.status === 400) {
+                response.json().then((result => {
+                    setPasswordError(result.message)
+                }))
+            } else if(response.status === 401) {
+                response.json().then((result => {
+                    setPasswordError(result.message)
+                }))
+            } else if(response.status === 409) {
+                response.json().then((result => {
+                    setUsernameError(result.message)
+                }))
+            } else{
+                throw new Error('Something went wrong!');
+            }
+          })
+          .catch((error) => {
+                setPasswordError("Invalid username or password.")
+          });
+    }
 
-    //register user
-    // const registerUser = async (data) => {
-    //     const { username, email, password, passwordConfirm } = data;
-    //     return axios.post(`auth/register`, {
-    //         username, email, password, passwordConfirm
-    //     }).catch((err) => {
-    //         setError(err.response.data);
-    //     })
-    // };
-    //login user
-    // const loginUser = async (data) => {
-    // const { username, password } = data;
-    //     return axios.post(`auth/login`, {
-    //         username, password
-    //     }).then(async () => {
-    //         await setUserContext();
-    //     }).catch((err) => {
-    //         setError(err.response.data);
-    //     })
-    // };
-
-
-    const loginUser = async(data) =>{
+    const loginUser = async(data) => {
         const { username, password } = data;
         const requestOptions = {
             method: 'POST',
@@ -68,6 +66,7 @@ export default function useAuth() {
     }
 
     return { 
+        registerUser,
         loginUser,   
         error
     }

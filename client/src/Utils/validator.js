@@ -1,4 +1,4 @@
-const validateUsername = (e,setUsername, setUsernameError) => {
+const validateUsername = (e, setUsername, setUsernameError) => {
     if(!e.target.value){
         setUsernameError("Username field is required.")
     } else {
@@ -6,7 +6,19 @@ const validateUsername = (e,setUsername, setUsernameError) => {
         setUsername(e.target.value)
     }
 }
-export default validateUsername
+
+const validateEmail = (e, setEmail, setEmailError) => {
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if(!e.target.value){
+        setEmailError("Email field is required.")
+    } else if(!emailRegex.test(e.target.value)) {
+        setEmailError("Invalid email address.")
+    } else {
+        setEmailError("")
+        setEmail(e.target.value)
+    }
+}
+
 
 const validatePassword = (e, setPassword, setPasswordError) => {
     if(!e.target.value){
@@ -16,4 +28,15 @@ const validatePassword = (e, setPassword, setPasswordError) => {
         setPassword(e.target.value)
     }
 }
-export {validateUsername, validatePassword}
+
+const validatePasswordRepeat = (e, password, setPasswordRepeat, setPasswordRepeatError) => {
+    if(!e.target.value){
+        setPasswordRepeatError("Password Repeat field is required.")
+    } else if(e.target.value !== password){
+        setPasswordRepeatError("Does not match password.")
+    } else{
+        setPasswordRepeatError("")
+        setPasswordRepeat(e.target.value)
+    }
+}
+export {validateUsername,validateEmail, validatePassword, validatePasswordRepeat}
