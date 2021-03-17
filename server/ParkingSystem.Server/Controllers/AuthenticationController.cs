@@ -67,7 +67,7 @@ namespace ParkingSystem.Server.Controllers
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo,
-                    user = user.UserName
+                    user = new { username = user.UserName, role = userRoles.First() }
                 });
             }
             return Unauthorized();
@@ -146,11 +146,12 @@ namespace ParkingSystem.Server.Controllers
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 //var accountId = jwtToken.Id;
-                var user = jwtToken.Claims.First(a => a.Type == ClaimTypes.Name)?.Value;
+                var user = jwtToken.Claims.First(a => a.Type == ClaimTypes.Name)?.Value;                
                 var userExists = await userManager.FindByNameAsync(user);
+                var userRoles = await userManager.GetRolesAsync(userExists);
                 // return account id from JWT token if validation successful
                 //Response.Headers.Add("User", userExists.UserName);
-                return Ok(new { username = userExists.UserName });
+                return Ok(new { username = userExists.UserName, role = userRoles.First() });
             }
             catch(Exception e)
             {

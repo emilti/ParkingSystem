@@ -16,7 +16,7 @@ export default function useFindUser() {
         .then(res => {
             if (res.ok) {
                 res.json().then((responseJson) => {
-                    setUser(responseJson["username"]);
+                    setUser(responseJson);
                     setLoading(false);
                 })
             }

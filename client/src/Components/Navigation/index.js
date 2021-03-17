@@ -5,23 +5,28 @@ import EnterVehiclePage from '../../Pages/EnterVehicle'
 import LoginPage from '../../Pages/Login'
 import RegisterPage from '../../Pages/Register'
 import HomePage from '../../Pages/Home'
+import ReportPage from '../../Pages/Report'
 import useFindUser from '../../Hooks/UseFindUser'
 
 const Navigation = () =>{
     const context = useContext(UserContext);
     const { user, setUser, isLoading } = useContext(UserContext);
+    const isAdmin = user && user.role === "Administrator"
     return (
       
         <Switch>
             <Route path="/" exact component={HomePage}/>
             <Route path="/EnterVehicle">
-            {user ? (<EnterVehiclePage />): (<Redirect to="/login" />)}
+                {user ? (<EnterVehiclePage />): (<Redirect to="/login" />)}
             </Route>
             <Route path="/Login">
-            {user ? (<Redirect to="/" />): (<LoginPage />)}
+                {user ? (<Redirect to="/" />): (<LoginPage />)}
             </Route>
             <Route path="/Register"> 
-            {user ? (<Redirect to="/" />): (<RegisterPage />)}
+                {user ? (<Redirect to="/" />): (<RegisterPage />)}
+            </Route>
+            <Route path="/Report"> 
+                {user && isAdmin ? (<ReportPage />) : (<Redirect to="/" />) }
             </Route>
         </Switch>
         )
