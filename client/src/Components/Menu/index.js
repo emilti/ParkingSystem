@@ -2,6 +2,9 @@ import React, { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import Styles from './index.module.css'
 import { UserContext } from '../../Hooks/UserContext';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+
 const Header = () => {
     const {user, setUser, isLoading} = useContext(UserContext);
     const isAdmin = user && user.role === "Administrator"
@@ -12,14 +15,19 @@ const Header = () => {
     }
     return(
         <header>
-            <div>
-                <Link to="/" title="Parking" className={Styles.link}>Home</Link> 
-                {user ? <Link to="/EnterVehicle" title="Enter Vehicle" className={Styles.link}>Enter Vehicle</Link> : ""} 
-                {user ? "" : <Link to="/Register" title="Register" className={Styles.link}>Register</Link>} 
-                {user ? "" : <Link to="/Login" title="Login" className={Styles.link}>Login</Link>} 
-                {user && isAdmin ? <Link to="/Report" title="Report" className={Styles.link}>Vehicles</Link> : ""} 
-                {user ? <Link to="/" title="Log Out" onClick={logOut} className={Styles.link}>Log Out</Link> : ""}
-            </div>
+                <Navbar bg="light" variant="light">
+                    <Navbar.Brand to="/">Parking</Navbar.Brand>
+                        <Nav className="mr-auto">
+                        <Link className="nav-link" to="/" >Home</Link>
+                        {user ? <Link className="nav-link" to="/EnterVehicle">Enter Vehicle</Link> : ""} 
+                        {user && isAdmin ? <Link className="nav-link" to="/Report">Vehicles</Link> : ""} 
+                        </Nav>
+                        <Nav className="ml-auto">
+                           {user ? "" : <Link className="nav-link" to="/Register">Register</Link>} 
+                           {user ? "" : <Link className="nav-link" to="/Login">Login</Link>} 
+                           {user ? <Link  className="nav-link"  to="/" onClick={logOut}>Log Out</Link> : ""}
+                        </Nav>
+                </Navbar>
             </header>
     )
 }
