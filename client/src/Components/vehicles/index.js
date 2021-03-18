@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Vehicle from '../vehicle';
-
+import getCookie from '../../Utils/cookie'
 class  Vehicles extends React.Component {
     constructor(props){
         super(props)
@@ -10,7 +10,12 @@ class  Vehicles extends React.Component {
     }
     
     getVehicles = async() => {
-        const promise = await fetch('http://localhost:57740/parking/getvehicles')
+        var token = getCookie('x-auth-token')
+        const requestOptions = {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+        };
+        const promise = await fetch('http://localhost:57740/parking/getvehicles', requestOptions)
         const vehicles = await promise.json()
         this.setState({
             vehicles

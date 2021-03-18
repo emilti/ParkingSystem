@@ -5,6 +5,11 @@ import { UserContext } from '../../Hooks/UserContext';
 const Header = () => {
     const {user, setUser, isLoading} = useContext(UserContext);
     const isAdmin = user && user.role === "Administrator"
+    
+    const logOut = () => {
+        document.cookie = "x-auth-token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+        setUser(null)
+    }
     return(
         <header>
             <div>
@@ -13,6 +18,7 @@ const Header = () => {
                 {user ? "" : <Link to="/Register" title="Register" className={Styles.link}>Register</Link>} 
                 {user ? "" : <Link to="/Login" title="Login" className={Styles.link}>Login</Link>} 
                 {user && isAdmin ? <Link to="/Report" title="Report" className={Styles.link}>Vehicles</Link> : ""} 
+                {user ? <Link to="/" title="Log Out" onClick={logOut} className={Styles.link}>Log Out</Link> : ""}
             </div>
             </header>
     )

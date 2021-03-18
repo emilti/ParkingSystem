@@ -22,7 +22,7 @@ const Login = () => {
     
     const handleSubmit = async(event) => {
         event.preventDefault()
-        const values = {username, password}
+        const values = {username, password, setPasswordError}
         await loginUser(values);
     }
 

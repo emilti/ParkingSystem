@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParkingSystem.Common.Responses;
@@ -61,6 +62,7 @@ namespace ParkingSystem.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult GetVehicles()
         {
             var vehicles = vehicleService.GetVehicles();

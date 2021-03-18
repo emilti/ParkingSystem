@@ -39,10 +39,14 @@ export default function useAuth() {
     }
 
     const loginUser = async(data) => {
-        const { username, password } = data;
+        const { username, password, setPasswordError } = data;
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Credentials': 'true',
+                'Access-Control-Allow-Origin': '*' 
+            },
             body: JSON.stringify({"username": username, "password": password})
         };
         fetch('http://localhost:57740/authenticate/login', requestOptions).then((response) => {
@@ -54,9 +58,9 @@ export default function useAuth() {
                     setUser(user)
                     history.push('/')
                 })
-            } else if(response.status === 401) {
-                throw new Error('Invalid username or password.');
-            } else{
+            } else if(response.status == 401) {
+                setPasswordError("Invalid username or password.")
+            } else {
                 throw new Error('Something went wrong!');
             }
         })
