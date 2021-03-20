@@ -1,9 +1,8 @@
 .link{
     width:5%;
-    ;
 }
 
 a:link { color: #000000; text-decoration: none}
 a:visited { color: #000000; text-decoration: none}
-a:hover { color: #3366CC; text-decoration: underline}
+a:hover { color: #3366CC; text-decoration: bold}
 a:active { color: #000000; text-decoration: none}

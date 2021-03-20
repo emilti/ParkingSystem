@@ -1,19 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ParkingSystem.Data;
 using ParkingSystem.Data.Models;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ParkingSystem.Server.Infrastructure
 {
     public class DbInitializer : IDbInitializer
     {
         private readonly IServiceScopeFactory scopeFactory;
+        private readonly ServiceProvider serviceProvider;
 
-        public DbInitializer(IServiceScopeFactory scopeFactory)
+
+        public DbInitializer(IServiceScopeFactory scopeFactory, IServiceCollection serviceCollection)
         {
             this.scopeFactory = scopeFactory;
+            this.serviceProvider = serviceCollection.BuildServiceProvider(); ;
         }
 
         public void Initialize()
@@ -71,7 +76,52 @@ namespace ParkingSystem.Server.Infrastructure
                         context.Discounts.Add(discount2);
                         context.Discounts.Add(discount3);
                         context.SaveChanges();
-                    }                    
+                    }
+
+                    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                    var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                    Task<IdentityResult> roleResult;
+                    string email = "admin@mail.com";
+                    string username = "admin";
+                    //Check that there is an Administrator role and create if not
+                    Task<bool> hasAdminRole = roleManager.RoleExistsAsync("Administrator");
+                    hasAdminRole.Wait();
+
+                    if (!hasAdminRole.Result)
+                    {
+                        roleResult = roleManager.CreateAsync(new IdentityRole("Administrator"));
+                        roleResult.Wait();
+                    }
+
+                    Task<bool> hasDriverRole = roleManager.RoleExistsAsync("Driver");
+                    hasDriverRole.Wait();
+
+                    if (!hasAdminRole.Result)
+                    {
+                        roleResult = roleManager.CreateAsync(new IdentityRole("Driver"));
+                        roleResult.Wait();
+                    }
+                    //Check if the admin user exists and create it if not
+                    //Add to the Administrator role
+
+                    Task<ApplicationUser> testUser = userManager.FindByEmailAsync(email);
+                    testUser.Wait();
+
+                    if (testUser.Result == null)
+                    {
+                        ApplicationUser administrator = new ApplicationUser();
+                        administrator.Email = email;
+                        administrator.UserName = username;
+
+                        Task<IdentityResult> newUser = userManager.CreateAsync(administrator, "Admin1");
+                        newUser.Wait();
+
+                        if (newUser.Result.Succeeded)
+                        {
+                            Task<IdentityResult> newUserRole = userManager.AddToRoleAsync(administrator, "Administrator");
+                            newUserRole.Wait();
+                        }
+                    }
                 }
             }
         }

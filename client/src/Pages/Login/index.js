@@ -6,57 +6,45 @@ import Col from 'react-bootstrap/Col'
 import Jumbotron from 'react-bootstrap/Jumbotron'
 import Input from '../../Components/Input'
 import Button from 'react-bootstrap/Button'
+import {UserContext} from '../../Hooks/UserContext.js'
+import Menu from '../../Components/Menu'
+import {validateUsername, validatePassword} from '../../Utils/validator.js'
+import useAuth from '../../Hooks/useAuth';
 
 const Login = () => {
+    const context = useContext(UserContext)
+    const { loginUser, error } = useAuth();
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [usernameError, setUsernameError] = useState('')
     const [passwordError, setPasswordError] = useState('')
     const history = useHistory()
-
+    
     const handleSubmit = async(event) => {
         event.preventDefault()
-        const requestOptions = {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({"username": username, "password": password})
-        };
-        fetch('http://localhost:57740/authenticate/login', requestOptions).then((response) => {
-            if (response.ok) {
-                response.json().then((responseJson) => {
-                    console.log(responseJson)
-                    const authToken = responseJson['token']
-                    document.cookie = `x-auth-token=${authToken}`
-                    history.push('/')
-                  })
-            } else if(response.status === 401) {
-                throw new Error('Invalid username or password.');
-            } else{
-                throw new Error('Something went wrong!');
-            }
-          })
-          .catch((error) => {
-                setPasswordError("Invalid username or password.")
-          });
-       
+        const values = {username, password, setPasswordError}
+        await loginUser(values);
     }
 
     return (
-      <Container>
-            <Row>
-                <Col></Col>
-                <Col md={8}>
-                    <Jumbotron>
-                        <form onSubmit={handleSubmit}>
-                            <Input field="Username" type="text" value={username} onChange={e => setUsername(e.target.value)}></Input>
-                            <Input  field="Password" type='password' value={password} onChange={e => setPassword(e.target.value)} error={passwordError}></Input>
-                            <Button variant="success" type="submit">Login</Button>
-                        </form>
-                    </Jumbotron>
-                </Col>
-                <Col></Col>
-            </Row>
-        </Container>)
+        <div>
+            <Menu/>
+            <Container>
+                <Row>
+                    <Col></Col>
+                    <Col md={8}>
+                        <Jumbotron>
+                            <form onSubmit={handleSubmit}>
+                                <Input field="Username" type="text" value={username} onBlur={e => validateUsername(e, setUsername, setUsernameError)} onChange={e => setUsername(e.target.value)} error={usernameError}></Input>
+                                <Input  field="Password" type='password' value={password} onBlur={e => validatePassword(e, setPassword, setPasswordError)} onChange={e => setPassword(e.target.value)} error={passwordError}></Input>
+                                <Button variant="success" type="submit">Login</Button>
+                            </form>
+                        </Jumbotron>
+                    </Col>
+                    <Col></Col>
+                </Row>
+            </Container>
+        </div>)
 }
 
 export default Login

@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Input from '../../Components/Input';
 import SingleSelectDropdown from '../../Components/SingleSelectDropdown';
-
+import Menu from '../../Components/Menu'
 class EnterVehicle extends Component {
     constructor(props){
         super(props)
@@ -113,22 +113,25 @@ class EnterVehicle extends Component {
             registrationNumberError
         } = this.state
         return(
-            <Container>  
-                <Row>
-                    <Col></Col>
-                    <Col md={ 8 }>
-                        <Jumbotron>
-                            <form onSubmit={ this.handleSubmit }>
-                                <Input field="Registration Number" type="text" onBlur={ this.validateRegistrationNumber } value={ registrationNumber } onChange={ this.changeRegistrationNumber } error={ registrationNumberError }></Input>
-                                <SingleSelectDropdown field="Category" options={ this.state.categories } onChange={ this.changeCategory }/>
-                                <SingleSelectDropdown field="Discount" options={ this.state.discounts } onChange={ this.changeDiscount }/>
-                                <Button variant="success" type="submit">Enter vehicle</Button>
-                            </form>
-                        </Jumbotron>
-                    </Col>
-                    <Col></Col>
-                </Row>
-            </Container>
+            <div>
+                <Menu/>
+                <Container>  
+                    <Row>
+                        <Col></Col>
+                        <Col md={ 8 }>
+                            <Jumbotron>
+                                <form onSubmit={ this.handleSubmit }>
+                                    <Input field="Registration Number" type="text" onBlur={ this.validateRegistrationNumber } value={ registrationNumber } onChange={ this.changeRegistrationNumber } error={ registrationNumberError }></Input>
+                                    <SingleSelectDropdown field="Category" options={ this.state.categories } onChange={ this.changeCategory }/>
+                                    <SingleSelectDropdown field="Discount" options={ this.state.discounts } onChange={ this.changeDiscount }/>
+                                    <Button variant="success" type="submit">Enter vehicle</Button>
+                                </form>
+                            </Jumbotron>
+                        </Col>
+                        <Col></Col>
+                    </Row>
+                </Container>
+            </div>
       )
     }
 }

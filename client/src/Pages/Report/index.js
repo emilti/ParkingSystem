@@ -2,15 +2,14 @@ import React from 'react'
 import Vehicles from '../../Components/vehicles'
 import Menu from '../../Components/Menu'
 
-const Home = () => {
-
+const Report = () => {
   return (
       <div>
         <Menu/>
-        Home
+        <Vehicles />
       </div>
       
   )
 }
 
-export default Home
+export default Report

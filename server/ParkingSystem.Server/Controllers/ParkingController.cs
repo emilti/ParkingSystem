@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParkingSystem.Common.Responses;
 using ParkingSystem.Models.Vehicles;
@@ -33,6 +35,7 @@ namespace ParkingSystem.Server.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        [Authorize]
         [GlobalModelStateValidatorAttribute]
         public IActionResult Enter(SaveVehicleResource vehicle)
         {
@@ -59,6 +62,7 @@ namespace ParkingSystem.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult GetVehicles()
         {
             var vehicles = vehicleService.GetVehicles();

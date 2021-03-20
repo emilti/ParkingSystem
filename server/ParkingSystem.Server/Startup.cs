@@ -2,6 +2,7 @@ using FluentValidation.AspNetCore;
 using GlobalErrorHandling.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -71,7 +72,8 @@ namespace ParkingSystem.Server
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                 };
             });
-
+            
+            services.AddSingleton(services);
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddTransient<IVehicleService, VehicleService>();
             services.AddTransient<ICategoryService, CategoryService>();
@@ -96,13 +98,18 @@ namespace ParkingSystem.Server
             }
            
             app.ConfigureCustomExceptionMiddleware();
+            app.UseCors(builder =>
+                builder
+                  .WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials()
+              );
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCors(options => options
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod());
+
             app.UseEndpoints(endpoints =>
             {                
                 endpoints.MapControllerRoute(
