@@ -2,12 +2,16 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using ParkingSystem.Common.Responses;
+using ParkingSystem.Models.ParkingDashboard;
 using ParkingSystem.Models.Vehicles;
+using ParkingSystem.Server.Hubs;
 using ParkingSystem.Server.Infrastructure.Filters;
 using ParkingSystem.Server.Models.Vehicles;
 using ParkingSystem.Services.Interfaces;
 using System;
+using System.Threading.Tasks;
 
 namespace ParkingSystem.Server.Controllers
 {
@@ -18,29 +22,40 @@ namespace ParkingSystem.Server.Controllers
         public readonly IVehicleService vehicleService;
         public readonly ICategoryService categoryService;
         public readonly IDiscountService discountService;
-        public ParkingController(IVehicleService vehicleService, ICategoryService categoryService, IDiscountService discountService)
+        private readonly IHubContext<DashboardHub> hubContext;
+        public ParkingController(IVehicleService vehicleService, ICategoryService categoryService, IDiscountService discountService, IHubContext<DashboardHub> hubContext)
         {
             this.vehicleService = vehicleService;
             this.categoryService = categoryService;
             this.discountService = discountService;
+            this.hubContext = hubContext;
         }
 
         [HttpGet]
         [Route("[action]")]
         public IActionResult GetАvailableSpaces()
         {
-            return this.Ok("Available parking spaces: " + vehicleService.GetAvailableSpaces());
+            var spaces = new { availableSpaces = vehicleService.GetAvailableSpaces() };
+            return this.Ok(spaces);
         }
 
 
         [HttpPost]
         [Route("[action]")]
-        [Authorize]
+        [Authorize(Roles = "Driver, Administrator")]
         [GlobalModelStateValidatorAttribute]
-        public IActionResult Enter(SaveVehicleResource vehicle)
+        public async Task<IActionResult> Enter(SaveVehicleResource vehicle)
         {
             ApiResponse response = vehicleService.SaveVehicle(vehicle.CategoryId, vehicle.DiscountId, vehicle.RegistrationNumber);
+            await CallHub();
             return StatusCode(response.StatusCode, response.Message);
+        }
+
+        private async Task CallHub()
+        {
+            StatisticsResource statistics = new StatisticsResource();
+            statistics.FreeParkingSpaces = this.vehicleService.GetAvailableSpaces();
+            await this.hubContext.Clients.All.SendAsync("RefreshStatistics", statistics);
         }
 
         [HttpPost]

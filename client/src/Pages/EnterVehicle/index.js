@@ -7,6 +7,7 @@ import Jumbotron from 'react-bootstrap/Jumbotron';
 import Input from '../../Components/Input';
 import SingleSelectDropdown from '../../Components/SingleSelectDropdown';
 import Menu from '../../Components/Menu'
+import getCookie from '../../Utils/cookie'
 class EnterVehicle extends Component {
     constructor(props){
         super(props)
@@ -76,9 +77,10 @@ class EnterVehicle extends Component {
     }
 
     handleSubmit = event => {
+        var token = getCookie('x-auth-token')
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
             body: JSON.stringify({ categoryId: this.state.categoryId, discountId: this.state.discountId, registrationNumber: this.state.registrationNumber })
         };
     
