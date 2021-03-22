@@ -18,7 +18,6 @@ namespace ParkingSystem.Services
         private readonly ParkingSystemDbContext data;
         public readonly ICategoryService categoryService;
         public readonly IDiscountService discountService;
-
         public VehicleService(ParkingSystemDbContext data, ICategoryService categoryService, IDiscountService discountService)
         {
             this.data = data;
@@ -26,15 +25,17 @@ namespace ParkingSystem.Services
             this.discountService = discountService;
         }
 
-        public ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber)
+        public ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber, string appUserId)
         {
+           
             var vehicle = new Vehicle
             {
                 CategoryId = categoryId,
                 DiscountId = discountId,
                 EnterParkingDate = DateTime.Now,
                 RegistrationNumber = registrationNumber,
-                IsInParking = true
+                IsInParking = true,
+                DriverId = new Guid(appUserId)
             };
 
             this.data.Add(vehicle);

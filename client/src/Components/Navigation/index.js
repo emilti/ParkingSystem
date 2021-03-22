@@ -6,10 +6,9 @@ import LoginPage from '../../Pages/Login'
 import RegisterPage from '../../Pages/Register'
 import HomePage from '../../Pages/Home'
 import ReportPage from '../../Pages/Report'
-import useFindUser from '../../Hooks/UseFindUser'
+import ProfilePage from '../../Pages/Profile'
 
 const Navigation = () =>{
-    const context = useContext(UserContext);
     const { user, setUser, isLoading } = useContext(UserContext);
     const isAdmin = user && user.role === "Administrator"
     return (
@@ -27,6 +26,9 @@ const Navigation = () =>{
             </Route>
             <Route path="/Report"> 
                 {user && isAdmin ? (<ReportPage />) : (<Redirect to="/" />) }
+            </Route>
+            <Route path="/Profile"> 
+                {user ? (<ProfilePage />) : (<Redirect to="/" />) }
             </Route>
         </Switch>
         )

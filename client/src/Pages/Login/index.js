@@ -12,7 +12,6 @@ import {validateUsername, validatePassword} from '../../Utils/validator.js'
 import useAuth from '../../Hooks/useAuth';
 
 const Login = () => {
-    const context = useContext(UserContext)
     const { loginUser, error } = useAuth();
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')

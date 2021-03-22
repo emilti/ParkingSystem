@@ -25,6 +25,7 @@ const Header = () => {
                         <Nav className="ml-auto">
                            {user ? "" : <Link className="nav-link" to="/Register">Register</Link>} 
                            {user ? "" : <Link className="nav-link" to="/Login">Login</Link>} 
+                           {user ? <Link  className="nav-link"  to="/Profile">My Profile</Link> : ""}
                            {user ? <Link  className="nav-link"  to="/" onClick={logOut}>Log Out</Link> : ""}
                         </Nav>
                 </Navbar>

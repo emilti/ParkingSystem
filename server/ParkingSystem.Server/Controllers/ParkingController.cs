@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using ParkingSystem.Common.Responses;
+using ParkingSystem.Data.Models;
 using ParkingSystem.Models.ParkingDashboard;
 using ParkingSystem.Models.Vehicles;
 using ParkingSystem.Server.Hubs;
 using ParkingSystem.Server.Infrastructure.Filters;
+using ParkingSystem.Server.Infrastructure.Helpers;
 using ParkingSystem.Server.Models.Vehicles;
 using ParkingSystem.Services.Interfaces;
 using System;
@@ -23,12 +25,14 @@ namespace ParkingSystem.Server.Controllers
         public readonly ICategoryService categoryService;
         public readonly IDiscountService discountService;
         private readonly IHubContext<DashboardHub> hubContext;
-        public ParkingController(IVehicleService vehicleService, ICategoryService categoryService, IDiscountService discountService, IHubContext<DashboardHub> hubContext)
+        private readonly IAuthHelper authHelper;
+        public ParkingController(IVehicleService vehicleService, ICategoryService categoryService, IDiscountService discountService, IHubContext<DashboardHub> hubContext, IAuthHelper authHelper)
         {
             this.vehicleService = vehicleService;
             this.categoryService = categoryService;
             this.discountService = discountService;
             this.hubContext = hubContext;
+            this.authHelper = authHelper;
         }
 
         [HttpGet]
@@ -59,7 +63,8 @@ namespace ParkingSystem.Server.Controllers
         [GlobalModelStateValidatorAttribute]
         public async Task<IActionResult> Enter(SaveVehicleResource vehicle)
         {
-            ApiResponse response = vehicleService.SaveVehicle(vehicle.CategoryId, vehicle.DiscountId, vehicle.RegistrationNumber);
+            ApplicationUser userExists = await authHelper.GetUserFromToken(vehicle.token);
+            ApiResponse response = vehicleService.SaveVehicle(vehicle.CategoryId, vehicle.DiscountId, vehicle.RegistrationNumber, userExists.Id);
             await CallHub();
             return StatusCode(response.StatusCode, response.Message);
         }

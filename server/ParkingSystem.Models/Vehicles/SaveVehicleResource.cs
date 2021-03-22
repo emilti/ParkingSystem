@@ -10,5 +10,6 @@ namespace ParkingSystem.Server.Models.Vehicles
         [Required]
         [StringLength(20)]
         public string RegistrationNumber { get; set; }
+        public string token { get; set; }
     }
 }

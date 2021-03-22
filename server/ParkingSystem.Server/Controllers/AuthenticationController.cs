@@ -7,7 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 using ParkingSystem.Common.Responses;
 using ParkingSystem.Data.Models;
 using ParkingSystem.Models.Users;
+using ParkingSystem.Server.Infrastructure.Helpers;
 using ParkingSystem.Server.Models;
+using ParkingSystem.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,11 +27,12 @@ namespace ParkingSystem.Server.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration _configuration;
-
-        public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        private readonly IAuthHelper authHelper;
+        public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IAuthHelper authHelper, IConfiguration configuration)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.authHelper = authHelper;
             _configuration = configuration;
         }
 
@@ -131,34 +134,21 @@ namespace ParkingSystem.Server.Controllers
         [Route("verify")]
         public async Task<IActionResult> Verify(string token)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes((_configuration["JWT:Secret"]));
             try
             {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
-
-                var jwtToken = (JwtSecurityToken)validatedToken;
-                //var accountId = jwtToken.Id;
-                var user = jwtToken.Claims.First(a => a.Type == ClaimTypes.Name)?.Value;                
-                var userExists = await userManager.FindByNameAsync(user);
+                ApplicationUser userExists = await authHelper.GetUserFromToken(token);
                 var userRoles = await userManager.GetRolesAsync(userExists);
                 // return account id from JWT token if validation successful
                 //Response.Headers.Add("User", userExists.UserName);
                 return Ok(new { username = userExists.UserName, role = userRoles.First() });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // return null if validation fails
                 return null;
             }
         }
+
+        
     }
 }
