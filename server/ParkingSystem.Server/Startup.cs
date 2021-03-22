@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using ParkingSystem.Data;
 using ParkingSystem.Data.Models;
+using ParkingSystem.Server.Hubs;
 using ParkingSystem.Server.Infrastructure;
 using ParkingSystem.Server.Validators;
 using ParkingSystem.Services;
@@ -72,7 +73,7 @@ namespace ParkingSystem.Server
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                 };
             });
-            
+            services.AddSignalR();
             services.AddSingleton(services);
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddTransient<IVehicleService, VehicleService>();
@@ -115,6 +116,7 @@ namespace ParkingSystem.Server
                 endpoints.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<DashboardHub>("/hub/Dashboard");
             });
         }
     }

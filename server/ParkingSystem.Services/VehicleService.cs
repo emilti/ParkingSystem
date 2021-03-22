@@ -42,7 +42,7 @@ namespace ParkingSystem.Services
             return new ApiOkResponse(vehicle, "Vehicle with registration number " + vehicle.RegistrationNumber + " entered the parking.");
         }
 
-        public ApiResponse? SoftDeleteVehicle(string registrationNumber, DateTime exitParkingDate)
+        public ApiResponse SoftDeleteVehicle(string registrationNumber, DateTime exitParkingDate)
         {
             Vehicle vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
             vehicle.IsInParking = false;
