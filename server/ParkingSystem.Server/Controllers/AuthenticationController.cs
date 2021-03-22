@@ -26,13 +26,15 @@ namespace ParkingSystem.Server.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IVehicleService vehicleService;
         private readonly IConfiguration _configuration;
         private readonly IAuthHelper authHelper;
-        public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IAuthHelper authHelper, IConfiguration configuration)
+        public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IAuthHelper authHelper, IVehicleService vehicleService, IConfiguration configuration)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.authHelper = authHelper;
+            this.vehicleService = vehicleService;
             _configuration = configuration;
         }
 
@@ -83,7 +85,7 @@ namespace ParkingSystem.Server.Controllers
         {
             var userExists = await userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status409Conflict, new ApiResponse(409 , "User already exists!"));
+                return StatusCode(StatusCodes.Status409Conflict, new ApiResponse(409, "User already exists!"));
 
             ApplicationUser user = new ApplicationUser()
             {
@@ -96,7 +98,7 @@ namespace ParkingSystem.Server.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, new ApiResponse(400, "User creation failed! Please check user details and try again."));
 
             return StatusCode(StatusCodes.Status200OK, "User created successfully!");
-        
+
         }
 
         [HttpPost]
@@ -149,6 +151,24 @@ namespace ParkingSystem.Server.Controllers
             }
         }
 
-        
+        [HttpPost]
+        [Route("profile")]
+        public async Task<IActionResult> Profile(string token)
+        {
+            try
+            {
+                ApplicationUser userExists = await authHelper.GetUserFromToken(token);
+                var userRoles = await userManager.GetRolesAsync(userExists);
+                // return account id from JWT token if validation successful
+                //Response.Headers.Add("User", userExists.UserName);
+                var vehiclesList = vehicleService.GetVehiclesByUser(new Guid(userExists.Id));
+                return Ok(vehiclesList);
+            }
+            catch (Exception e)
+            {
+                // return null if validation fails
+                return null;
+            }
+        }
     }
 }

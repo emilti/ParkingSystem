@@ -15,5 +15,6 @@ namespace ParkingSystem.Services.Interfaces
         Decimal? CalculateDueAmount(int vehicleCategoryId, int? vehicleDiscountId, DateTime vehicleEnterParkingDate, DateTime currentDateTime);
         List<VehicleInfoResource> GetVehicles();
         List<VehicleInfoResource> GetVehiclesInParking();
+        List<VehicleInfoResource> GetVehiclesByUser(Guid AppUserId);
     }
 }

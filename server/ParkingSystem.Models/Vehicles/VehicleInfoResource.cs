@@ -12,5 +12,7 @@ namespace ParkingSystem.Models.Vehicles
         public string CategoryName { get; set; }
         public int? DiscountId { get; set; }
         public decimal? DiscountPercentage { get; set; }
+
+        public bool IsInParking { get; set; }
     }
 }
