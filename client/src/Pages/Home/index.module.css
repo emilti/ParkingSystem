@@ -1,0 +1,30 @@
+.containerStyle{
+    margin-top: 10px;
+}
+
+.fontFreeSpacesText{
+  font-weight: 900;
+  font-size:15px; 
+}
+
+.fontFreeSpacesValue{
+    font-weight: 900;
+    font-size:48px; 
+    color:green
+}
+
+.fontTotalSpaceValue{
+    font-weight: 900;
+    font-size:48px; 
+    color:black
+}
+
+.fontTitle{
+    font-weight: 900;
+    font-size:15px; 
+    color:black;
+}
+
+.rowMargin{
+    margin-top: 2%;
+}

@@ -39,6 +39,19 @@ namespace ParkingSystem.Server.Controllers
             return this.Ok(spaces);
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult GetParkingStaticData()
+        {
+            ParkingStaticDataResource staticDataResource = new ParkingStaticDataResource()
+            {
+                TotalParkingSpaces = Common.Constants.TOTAL_PARKING_SPACES,
+                Categories = this.categoryService.GetCategories(),
+                Discounts = this.discountService.GetDiscounts()
+            };
+            
+            return this.Ok(staticDataResource);
+        }
 
         [HttpPost]
         [Route("[action]")]
@@ -53,7 +66,7 @@ namespace ParkingSystem.Server.Controllers
 
         private async Task CallHub()
         {
-            StatisticsResource statistics = new StatisticsResource();
+            FreeParkingSpacesResource statistics = new FreeParkingSpacesResource();
             statistics.FreeParkingSpaces = this.vehicleService.GetAvailableSpaces();
             await this.hubContext.Clients.All.SendAsync("RefreshStatistics", statistics);
         }
