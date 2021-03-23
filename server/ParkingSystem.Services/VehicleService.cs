@@ -127,10 +127,12 @@ namespace ParkingSystem.Services
 
         public List<VehicleInfoResource> GetVehiclesByUser(Guid AppUserId)
         {
-            var vehicles = this.data.Vehicles.Where(a => a.DriverId == AppUserId).Select(a => new VehicleInfoResource() { RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate, IsInParking = a.IsInParking, }).ToList();
+            var vehicles = this.data.Vehicles.Where(a => a.DriverId == AppUserId).Select(a => new VehicleInfoResource() { RegistrationNumber = a.RegistrationNumber, CategoryId = a.CategoryId, DiscountId = a.DiscountId, ExitParkingDate = a.ExitParkingDate, EnterParkingDate = a.EnterParkingDate, IsInParking = a.IsInParking }).ToList();
             foreach (var vehicle in vehicles)
             {
                 vehicle.DueAmount = CalculateDueAmount(vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, DateTime.Now);
+                vehicle.Category = categoryService.GetCategoryById(vehicle.CategoryId);
+                vehicle.Discount = discountService.GetDiscountsById(vehicle.DiscountId);
             }
             return vehicles;
         }

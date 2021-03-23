@@ -161,8 +161,10 @@ namespace ParkingSystem.Server.Controllers
                 var userRoles = await userManager.GetRolesAsync(userExists);
                 // return account id from JWT token if validation successful
                 //Response.Headers.Add("User", userExists.UserName);
+                
                 var vehiclesList = vehicleService.GetVehiclesByUser(new Guid(userExists.Id));
-                return Ok(vehiclesList);
+                var profileInfo = new { Username = userExists.UserName, Email = userExists.Email, vehicles = vehiclesList };
+                return Ok(profileInfo);
             }
             catch (Exception e)
             {
