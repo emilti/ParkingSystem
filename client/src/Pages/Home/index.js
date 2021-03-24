@@ -28,7 +28,6 @@ const Home = () => {
         .then(() => {
           connection.on("RefreshStatistics", (message) => {
             setAvailableSpaces(message["freeParkingSpaces"])
-            console.log(message)
           });
         })
         .catch((error) => console.log(error));

@@ -10,7 +10,6 @@ export default function  useParkingData(){
    
     useEffect( () => {
         function getAvailableSpaces() {
-            
         var token = getCookie('x-auth-token')
         const requestOptions = {
                 method: 'GET',
@@ -33,7 +32,6 @@ export default function  useParkingData(){
         .then(res => {
             if (res.ok) {
                 res.json().then((responseJson) => {
-                    console.log(responseJson)
                     setTotalParkingSpaces(responseJson["totalParkingSpaces"])
                     setCategories(responseJson["categories"])
                     setDiscounts(responseJson["discounts"])
