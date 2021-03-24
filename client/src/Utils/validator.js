@@ -39,4 +39,13 @@ const validatePasswordRepeat = (e, password, setPasswordRepeat, setPasswordRepea
         setPasswordRepeat(e.target.value)
     }
 }
-export {validateUsername,validateEmail, validatePassword, validatePasswordRepeat}
+
+const validateRegistrationNumber = (event, updateRegistrationNumberError) => {
+    if(event.target.value === ''){
+        updateRegistrationNumberError("Invalid registration number.")
+    } else {
+        updateRegistrationNumberError("")
+    }
+}
+
+export {validateUsername,validateEmail, validatePassword, validatePasswordRepeat, validateRegistrationNumber}

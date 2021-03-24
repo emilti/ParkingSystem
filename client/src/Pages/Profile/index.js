@@ -26,7 +26,6 @@ const Profile = () =>{
             if (res.ok) {
                 res.json().then((responseJson) => {
                     var items = new Array();
-                    console.log(responseJson)
                     responseJson.vehicles.map((r) => {  
                         items.push({registrationNumber: r.registrationNumber, dueAmount: r.dueAmount, enterParkingDate: r.enterParkingDate, exitParkingDate: r.exitParkingDate, isInParking: r.isInParking, categoryName: r.category.name, parkingSpaces: r.category.parkingSpaces, discountPercentage: r.discount.discountPercentage})
                     })
