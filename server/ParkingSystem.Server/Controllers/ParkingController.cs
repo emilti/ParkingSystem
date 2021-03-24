@@ -118,6 +118,14 @@ namespace ParkingSystem.Server.Controllers
             var discounts = discountService.GetDiscounts();
             return Ok(discounts);
         }
+
+        [HttpPost]
+        [Route("[action]")]
+        [Authorize(Roles = "Administrator")]
+        public IActionResult FilterVehicles(FilterVehiclesResource filterVehiclesResource)
+        {
+            return this.Ok(this.vehicleService.GetVehicleByRegistrationNumber(filterVehiclesResource.registrationNumberFilter));
+        }
     }
 }
 
