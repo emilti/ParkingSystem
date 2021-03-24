@@ -19,5 +19,8 @@ namespace ParkingSystem.Data.Models
         public virtual Category Category { get; set; }
         public int? DiscountId { get; set; }
         public virtual Discount Discount { get; set; }
+        [Required]
+        public Guid DriverId { get; set; }
+        public virtual ApplicationUser Driver { get; set; }
     }
 }

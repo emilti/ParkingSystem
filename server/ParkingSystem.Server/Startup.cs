@@ -16,6 +16,7 @@ using ParkingSystem.Data;
 using ParkingSystem.Data.Models;
 using ParkingSystem.Server.Hubs;
 using ParkingSystem.Server.Infrastructure;
+using ParkingSystem.Server.Infrastructure.Helpers;
 using ParkingSystem.Server.Validators;
 using ParkingSystem.Services;
 using ParkingSystem.Services.Interfaces;
@@ -79,6 +80,7 @@ namespace ParkingSystem.Server
             services.AddTransient<IVehicleService, VehicleService>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IDiscountService, DiscountService>();
+            services.AddTransient<IAuthHelper, AuthHelper>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
         }
 

@@ -3,11 +3,8 @@ import {Card, Row, Col, Container} from "react-bootstrap"
 import useParkingData from '../../Hooks/useParkingData'
 import "./styles.css"
 
-const CustomCard = ({title, value, bodyStyles}) =>{
-
+const StatisticsCard = ({title, value, bodyStyles}) =>{
     const {availableSpaces, totalParkingSpaces, categories, discounts} = useParkingData()
-
-        
     
 return (
     <Card className={["text-center"].join(" ")}>
@@ -19,4 +16,4 @@ return (
     )
 }
 
-export default CustomCard
+export default StatisticsCard

@@ -18,7 +18,6 @@ namespace ParkingSystem.Services
         private readonly ParkingSystemDbContext data;
         public readonly ICategoryService categoryService;
         public readonly IDiscountService discountService;
-
         public VehicleService(ParkingSystemDbContext data, ICategoryService categoryService, IDiscountService discountService)
         {
             this.data = data;
@@ -26,15 +25,17 @@ namespace ParkingSystem.Services
             this.discountService = discountService;
         }
 
-        public ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber)
+        public ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber, string appUserId)
         {
+           
             var vehicle = new Vehicle
             {
                 CategoryId = categoryId,
                 DiscountId = discountId,
                 EnterParkingDate = DateTime.Now,
                 RegistrationNumber = registrationNumber,
-                IsInParking = true
+                IsInParking = true,
+                DriverId = new Guid(appUserId)
             };
 
             this.data.Add(vehicle);
@@ -122,6 +123,18 @@ namespace ParkingSystem.Services
         public List<VehicleInfoResource> GetVehiclesInParking()
         {
             return this.data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoResource() { RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate }).ToList();
+        }
+
+        public List<VehicleInfoResource> GetVehiclesByUser(Guid AppUserId)
+        {
+            var vehicles = this.data.Vehicles.Where(a => a.DriverId == AppUserId).Select(a => new VehicleInfoResource() { RegistrationNumber = a.RegistrationNumber, CategoryId = a.CategoryId, DiscountId = a.DiscountId, ExitParkingDate = a.ExitParkingDate, EnterParkingDate = a.EnterParkingDate, IsInParking = a.IsInParking }).ToList();
+            foreach (var vehicle in vehicles)
+            {
+                vehicle.DueAmount = CalculateDueAmount(vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, DateTime.Now);
+                vehicle.Category = categoryService.GetCategoryById(vehicle.CategoryId);
+                vehicle.Discount = discountService.GetDiscountsById(vehicle.DiscountId);
+            }
+            return vehicles;
         }
     }
 }

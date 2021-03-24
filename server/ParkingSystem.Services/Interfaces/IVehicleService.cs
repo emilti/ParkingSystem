@@ -9,11 +9,12 @@ namespace ParkingSystem.Services.Interfaces
     public interface IVehicleService
     {
         int GetAvailableSpaces();
-        ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber);
+        ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber, string AppUserId);
         VehicleInfoResource GetVehicleByRegistrationNumber(string registrationNumber);
         ApiResponse? SoftDeleteVehicle(string registrationNumber, DateTime exitParkingDate);
         Decimal? CalculateDueAmount(int vehicleCategoryId, int? vehicleDiscountId, DateTime vehicleEnterParkingDate, DateTime currentDateTime);
         List<VehicleInfoResource> GetVehicles();
         List<VehicleInfoResource> GetVehiclesInParking();
+        List<VehicleInfoResource> GetVehiclesByUser(Guid AppUserId);
     }
 }
