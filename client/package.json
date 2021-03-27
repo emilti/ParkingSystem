@@ -7,6 +7,8 @@
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.7.1",
+    "@wojtekmaj/react-daterange-picker": "^3.1.0",
+    "babel-plugin-polyfill-corejs2": "^0.1.10",
     "bootstrap": "^4.6.0",
     "moment": "^2.29.1",
     "react": "^17.0.1",
