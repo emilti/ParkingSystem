@@ -3,8 +3,11 @@ import Vehicle from '../vehicle'
 import MultySelect from '../MultySelect'
 import Input from '../Input'
 import getCookie from '../../Utils/cookie'
-import Button from 'react-bootstrap/Button'
+import {Form, Col, Button} from 'react-bootstrap'
 import {getCategories, getDiscounts} from '../../Utils/dropdowns'
+import DateRangePicker from '@wojtekmaj/react-daterange-picker';
+import '@wojtekmaj/react-daterange-picker/dist/entry.nostyle';
+import 'react-calendar/dist/Calendar.css'
 class Vehicles extends React.Component {
     constructor(props){
         super(props)
@@ -12,8 +15,13 @@ class Vehicles extends React.Component {
             vehicles: [],
             registrationNumberFilter: '',
             categories: [] ,
-            discounts: []
+            discounts: [],
+            dateRange: [new Date(Date.now() - 86400000), new Date()],
+            selectedCategories: [],
+            selectedDiscounts: []
         }
+
+        this.onCategoriesChange = this.onCategoriesChange.bind(this);
     }
     
     getVehicles = async() => {
@@ -25,7 +33,7 @@ class Vehicles extends React.Component {
         const promise = await fetch('http://localhost:57740/parking/getvehicles', requestOptions)
         const vehicles = await promise.json()
         this.setState({
-            vehicles
+            vehicles: vehicles
         })
     }
 
@@ -56,8 +64,8 @@ class Vehicles extends React.Component {
         var token = getCookie('x-auth-token')
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-            body: JSON.stringify({ registrationNumberFilter: this.state.registrationNumberFilter, token: token })
+            headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
+            body: JSON.stringify({registrationNumberFilter: this.state.registrationNumberFilter, token: token})
         };    
     
         event.preventDefault();
@@ -80,13 +88,53 @@ class Vehicles extends React.Component {
         });
     }
 
+    onChangeEnterDateRange = (date) =>{
+        if(date != null){
+          this.setState(dateRange => ({dateRange: [ date[0], date[1]]}));
+        }
+        else{
+            this.setState({dateRange: [new Date(Date.now() - 86400000), new Date()]})
+        }
+    }
+
+    onCategoriesChange = (e) =>{
+        const selected=[];
+        let selectedOption=(e.target.selectedOptions);
+        for (let i = 0; i < selectedOption.length; i++){
+            selected.push(selectedOption.item(i).value)
+        }
+        this.setState({selectedCategories: selected}) 
+    }
+
+    onDiscountsChange = (e) =>{
+        const selected=[];
+        let selectedOption=(e.target.selectedOptions);
+        for (let i = 0; i < selectedOption.length; i++){
+            selected.push(selectedOption.item(i).value)
+        }
+        this.setState({selectedDiscounts: selected})  
+    }
+
+
     render() {
         return(
            <div>
-                <Input type={"text"} field="Registration number" onChange={this.changeRegistrationNumberFilter}/>
-                <MultySelect field={"Categories"} collection={this.state.categories}/>
-                <MultySelect field={"Discounts"} collection={this.state.discounts}/>
-                <Button variant="success" type="submit" onClick={this.handleSubmit}>Enter vehicle</Button>
+         <Form>
+            <Form.Row className="align-items-center">
+                <Col sm={3} className="my-1">
+                    <Form.Label htmlFor="inlineFormInputRegistrationumber" srOnly>
+                    Registration number
+                    </Form.Label>
+                    <Form.Control id="inlineFormInputRegistrationumber" placeholder="Registration number" />
+                </Col>
+                <MultySelect field={"Categories"} collection={this.state.categories} value={this.selectedCategories} onChangeMultyselect={e => this.onCategoriesChange(e)}/>
+                <MultySelect field={"Discounts"} collection={this.state.discounts} value={this.selectedDiscounts} onChangeMultyselect={e => this.onDiscountsChange(e)}/>
+                <Col sm={2} className="my-1">
+                    <DateRangePicker onChange={this.onChangeEnterDateRange} value={this.state.dateRange}/>
+                </Col>
+            </Form.Row>
+        </Form>  
+        <Button variant="success" type="submit" onClick={this.handleSubmit}>Enter vehicle</Button>
                 {
                    this.renderVehicles()
                 }
