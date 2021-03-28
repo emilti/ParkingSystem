@@ -122,9 +122,9 @@ namespace ParkingSystem.Server.Controllers
         [HttpPost]
         [Route("[action]")]
         [Authorize(Roles = "Administrator")]
-        public IActionResult FilterVehicles(FilterVehiclesResource filterVehiclesResource)
+        public IActionResult FilterVehicles([FromBody]FilterVehiclesResource filterVehiclesResource)
         {
-            return this.Ok(this.vehicleService.GetVehicleByRegistrationNumber(filterVehiclesResource.registrationNumberFilter));
+            return this.Ok(this.vehicleService.GetFilteredVehicles(filterVehiclesResource.registrationNumber, filterVehiclesResource.selectedCategories, filterVehiclesResource.selectedDiscounts));
         }
     }
 }

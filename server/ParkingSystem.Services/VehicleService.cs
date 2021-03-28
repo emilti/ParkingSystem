@@ -136,5 +136,17 @@ namespace ParkingSystem.Services
             }
             return vehicles;
         }
+
+        public List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int[] selectedDiscounts)
+        {
+            var categories = this.categoryService.GetCategories();
+            var discounts = this.discountService.GetDiscounts();
+            var vehicles = data.Vehicles.Where(a => a.RegistrationNumber.Contains(registrationNumber) && selectedCatecories.Contains(a.CategoryId)).Select(a => new VehicleInfoResource() { Id = a.VehicleId, RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate, CategoryName = GetCategoryName(a, categories), DiscountPercentage = GetDiscountPercentage(a, discounts) }).ToList();
+            foreach (var vehicleInfoModel in vehicles)
+            {
+                vehicleInfoModel.DueAmount = CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
+            }
+            return vehicles;
+        }
     }
 }
