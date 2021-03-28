@@ -2,6 +2,8 @@
 {
     public class FilterVehiclesResource
     {
-        public string registrationNumberFilter { get; set; }
+        public string registrationNumber { get; set; }
+        public int[] selectedCategories { get; set; }
+        public int[] selectedDiscounts { get; set; }
     }
 }

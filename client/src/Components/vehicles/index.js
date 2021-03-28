@@ -1,19 +1,16 @@
 import React, { Component } from 'react'
 import Vehicle from '../vehicle'
 import MultySelect from '../MultySelect'
-import Input from '../Input'
 import getCookie from '../../Utils/cookie'
 import {Form, Col, Button} from 'react-bootstrap'
 import {getCategories, getDiscounts} from '../../Utils/dropdowns'
-import DateRangePicker from '@wojtekmaj/react-daterange-picker';
-import '@wojtekmaj/react-daterange-picker/dist/entry.nostyle';
-import 'react-calendar/dist/Calendar.css'
+import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 class Vehicles extends React.Component {
     constructor(props){
         super(props)
         this.state = {
             vehicles: [],
-            registrationNumberFilter: '',
+            registrationNumber: '',
             categories: [] ,
             discounts: [],
             dateRange: [new Date(Date.now() - 86400000), new Date()],
@@ -48,9 +45,9 @@ class Vehicles extends React.Component {
        })
     }
 
-    changeRegistrationNumberFilter = event => {
+    changeRegistrationNumber = event => {
         this.setState({
-            registrationNumberFilter: event.target.value
+            registrationNumber: event.target.value
         })
     }
 
@@ -65,8 +62,13 @@ class Vehicles extends React.Component {
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
-            body: JSON.stringify({registrationNumberFilter: this.state.registrationNumberFilter, token: token})
-        };    
+            body: JSON.stringify({
+                registrationNumber: this.state.registrationNumber,
+                selectedCategories: this.state.selectedCategories,
+                selectedDiscounts: this.state.selectedDiscounts,
+                token: token})
+            };    
+            console.log(requestOptions)
     
         event.preventDefault();
         fetch('http://localhost:57740/parking/FilterVehicles', requestOptions)
@@ -79,6 +81,9 @@ class Vehicles extends React.Component {
             if(response.ok){
                 response.json().then((result => {
                     console.log(result)
+                    this.setState({
+                        vehicles: result
+                    })
                 }))
             }
         })
@@ -125,16 +130,16 @@ class Vehicles extends React.Component {
                     <Form.Label htmlFor="inlineFormInputRegistrationumber" srOnly>
                     Registration number
                     </Form.Label>
-                    <Form.Control id="inlineFormInputRegistrationumber" placeholder="Registration number" />
+                    <Form.Control id="inlineFormInputRegistrationumber" placeholder="Registration number" value={this.registrationNumber} onChange={this.changeRegistrationNumber} />
                 </Col>
                 <MultySelect field={"Categories"} collection={this.state.categories} value={this.selectedCategories} onChangeMultyselect={e => this.onCategoriesChange(e)}/>
                 <MultySelect field={"Discounts"} collection={this.state.discounts} value={this.selectedDiscounts} onChangeMultyselect={e => this.onDiscountsChange(e)}/>
-                <Col sm={2} className="my-1">
+                <Col sm={4}>
                     <DateRangePicker onChange={this.onChangeEnterDateRange} value={this.state.dateRange}/>
                 </Col>
             </Form.Row>
         </Form>  
-        <Button variant="success" type="submit" onClick={this.handleSubmit}>Enter vehicle</Button>
+        <Button variant="success" type="submit" onClick={this.handleSubmit}>Filter visits</Button>
                 {
                    this.renderVehicles()
                 }
