@@ -4,22 +4,16 @@ import Input from '../../Components/Input'
 import SingleSelectDropdown from '../../Components/SingleSelectDropdown'
 import Menu from '../../Components/Menu'
 import getCookie from '../../Utils/cookie'
-import {getCategories, getDiscounts} from '../../Utils/dropdowns'
+import {buildCategoriesDropdown, buildDiscountsDropdown} from '../../Utils/dropdowns'
 import {validateRegistrationNumber} from '../../Utils/validator.js'
 class EnterVehicle extends Component {
     constructor(props){
         super(props)
         this.state = {
-            categories: [{
-                "value": "",
-                "label": "Select category"
-            }],
-            discounts: [{
-                "value": "",
-                "label": "Select discount"
-            }],
+            categories: [],
+            discounts: [],
             categoryId: '',
-            discountId: '',
+            discountId: null,
             registrationNumber: '',
             registrationNumberError: ''
         }
@@ -34,12 +28,12 @@ class EnterVehicle extends Component {
     // }
     
     componentDidMount(){
-        getCategories().then((value) => { 
+        buildCategoriesDropdown("Enter vehicle").then((value) => { 
             this.setState({categories: [...this.state.categories, ...value]
             })
         })
        
-        getDiscounts().then((value) => { 
+        buildDiscountsDropdown("Enter vehicle").then((value) => { 
             this.setState({discounts: [...this.state.discounts, ...value]})
         })
     }

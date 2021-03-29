@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import Vehicle from '../vehicle'
 import MultySelect from '../MultySelect'
+import SingleSelectDropdown from '../SingleSelectDropdown'
+import Input from '../Input'
 import getCookie from '../../Utils/cookie'
 import {Form, Col, Button} from 'react-bootstrap'
-import {getCategories, getDiscounts} from '../../Utils/dropdowns'
+import {buildCategoriesDropdown, buildDiscountsDropdown, getSorting, getSortingOrder} from '../../Utils/dropdowns'
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 class Vehicles extends React.Component {
     constructor(props){
@@ -13,9 +15,13 @@ class Vehicles extends React.Component {
             registrationNumber: '',
             categories: [] ,
             discounts: [],
+            sortings: [],
+            sortingOrders: [],
             dateRange: [new Date(Date.now() - 86400000), new Date()],
             selectedCategories: [],
-            selectedDiscounts: []
+            selectedDiscounts: [],
+            selectedSorting: '',
+            selectedSortingOrder: ''
         }
 
         this.onCategoriesChange = this.onCategoriesChange.bind(this);
@@ -52,8 +58,10 @@ class Vehicles extends React.Component {
     }
 
     componentDidMount(){
-        getCategories().then((value) => {this.setState({categories: value})})
-        getDiscounts().then((value) => {this.setState({discounts: value})})
+        buildCategoriesDropdown("Filter vehicles").then((value) => {this.setState({categories: value})})
+        buildDiscountsDropdown("Filter vehicles").then((value) => {this.setState({discounts: value})})
+        getSorting().then((value) => {this.setState({sortings: value})})
+        getSortingOrder().then((value) => {this.setState({sortingOrders: value})})
         this.getVehicles()
     }
 
@@ -69,7 +77,7 @@ class Vehicles extends React.Component {
                 token: token})
             };    
             console.log(requestOptions)
-    
+    console.log(requestOptions)
         event.preventDefault();
         fetch('http://localhost:57740/parking/FilterVehicles', requestOptions)
         .then(async response => {
@@ -120,22 +128,42 @@ class Vehicles extends React.Component {
         this.setState({selectedDiscounts: selected})  
     }
 
+    changeSorting = event => {
+        this.setState({
+            selectedSorting: event.target.value
+        })
+    }
+
+    changeSortingOrder = event => {
+        this.setState({
+            selectedSortingOrder: event.target.value
+        })
+    }
 
     render() {
         return(
            <div>
          <Form>
             <Form.Row className="align-items-center">
-                <Col sm={3} className="my-1">
+                {/* <Col sm={2} className="my-1">
                     <Form.Label htmlFor="inlineFormInputRegistrationumber" srOnly>
                     Registration number
                     </Form.Label>
                     <Form.Control id="inlineFormInputRegistrationumber" placeholder="Registration number" value={this.registrationNumber} onChange={this.changeRegistrationNumber} />
-                </Col>
+                </Col> */}
+                <Input field="" type="text"  value={this.registrationNumber} onChange={this.changeRegistrationNumber} />
                 <MultySelect field={"Categories"} collection={this.state.categories} value={this.selectedCategories} onChangeMultyselect={e => this.onCategoriesChange(e)}/>
                 <MultySelect field={"Discounts"} collection={this.state.discounts} value={this.selectedDiscounts} onChangeMultyselect={e => this.onDiscountsChange(e)}/>
                 <Col sm={4}>
                     <DateRangePicker onChange={this.onChangeEnterDateRange} value={this.state.dateRange}/>
+                </Col>
+            </Form.Row><br/>
+            <Form.Row className="align-items-center">
+                <Col  sm={2}>
+                    <SingleSelectDropdown field="" options={this.state.sortings} onChange={this.changeSorting}/>
+                </Col>
+                <Col sm={2}>
+                    <SingleSelectDropdown field="" options={this.state.sortingOrders} onChange={this.changeSortingOrder}/>
                 </Col>
             </Form.Row>
         </Form>  

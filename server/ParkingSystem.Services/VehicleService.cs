@@ -137,11 +137,21 @@ namespace ParkingSystem.Services
             return vehicles;
         }
 
-        public List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int[] selectedDiscounts)
+        public List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int?[] selectedDiscounts)
         {
             var categories = this.categoryService.GetCategories();
             var discounts = this.discountService.GetDiscounts();
-            var vehicles = data.Vehicles.Where(a => a.RegistrationNumber.Contains(registrationNumber) && selectedCatecories.Contains(a.CategoryId)).Select(a => new VehicleInfoResource() { Id = a.VehicleId, RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate, CategoryName = GetCategoryName(a, categories), DiscountPercentage = GetDiscountPercentage(a, discounts) }).ToList();
+            if(selectedCatecories.Contains(Constants.ALL_CATEGORIES))
+            {
+                selectedCatecories = this.categoryService.GetCategories().Select(a => a.CategoryId).ToArray();
+            }
+            if (selectedDiscounts.Contains(Constants.ALL_DISCOUNTS))
+            {
+                selectedDiscounts = this.discountService.GetDiscounts().Select(a => a.DiscountId).Cast<int?>().ToArray();
+                selectedDiscounts.Append(null);
+            }
+
+            var vehicles = data.Vehicles.Where(a => a.RegistrationNumber.Contains(registrationNumber) && selectedCatecories.Contains(a.CategoryId) && selectedDiscounts.Contains(a.DiscountId == null ? Constants.NO_DISCOUNTS : a.DiscountId)).Select(a => new VehicleInfoResource() { Id = a.VehicleId, RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate, CategoryName = GetCategoryName(a, categories), DiscountPercentage = GetDiscountPercentage(a, discounts) }).ToList();
             foreach (var vehicleInfoModel in vehicles)
             {
                 vehicleInfoModel.DueAmount = CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
