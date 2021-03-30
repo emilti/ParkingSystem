@@ -74,6 +74,8 @@ class Vehicles extends React.Component {
                 registrationNumber: this.state.registrationNumber,
                 selectedCategories: this.state.selectedCategories,
                 selectedDiscounts: this.state.selectedDiscounts,
+                selectedSorting: this.state.selectedSorting,
+                selectedSortingOrder: this.state.selectedSortingOrder,
                 token: token})
             };    
             console.log(requestOptions)

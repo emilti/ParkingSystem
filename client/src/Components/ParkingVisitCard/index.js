@@ -14,7 +14,7 @@ return (
                     <ListGroup.Item>Exit parking: {exitParkingDate ? Moment(String(exitParkingDate)).format('MM/DD/YYYY HH:mm:ss') : "-"}</ListGroup.Item>
                     <ListGroup.Item>In Parking: {isInParking ? "Yes" : "No"}</ListGroup.Item>
                     <ListGroup.Item>Category: {categoryName}({parkingSpaces})</ListGroup.Item>
-                    <ListGroup.Item>Discount: {discountPercentage != null ? discountPercentage + "%" : "-" }</ListGroup.Item>
+                    <ListGroup.Item>Discount: {discountPercentage != null ? discountPercentage : "-" }</ListGroup.Item>
             </ListGroup>
         </Card>
     </Col>

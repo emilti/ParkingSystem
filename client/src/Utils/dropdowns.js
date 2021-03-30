@@ -43,18 +43,18 @@ const getDiscounts = async () => {
 
 const getSorting = async () => {
     let options = [
-        {"value": "1", "label": "No sorting"},
-        {"value": "2", "label": "Due Amount"},
-        {"value": "3", "label": "Registration Number"},
-        {"value": "4", "label": "Entered Parking Date"}]
+        {"value": "", "label": "No sorting"},
+        {"value": "1", "label": "Due Amount"},
+        {"value": "2", "label": "Registration Number"},
+        {"value": "3", "label": "Entered Parking Date"}]
     return options
 }
 
 const getSortingOrder = async () => {
     let options = [
-        {"value": "1", "label": "No sorting"},
-        {"value": "2", "label": "Ascending"},
-        {"value": "3", "label": "Descending"}]
+        {"value": "", "label": "No sorting"},
+        {"value": "1", "label": "Ascending"},
+        {"value": "2", "label": "Descending"}]
     return options
 }
 export {buildCategoriesDropdown, buildDiscountsDropdown, getSorting, getSortingOrder}
