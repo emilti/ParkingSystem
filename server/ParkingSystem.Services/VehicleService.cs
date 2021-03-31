@@ -49,7 +49,7 @@ namespace ParkingSystem.Services
             vehicle.IsInParking = false;
             vehicle.ExitParkingDate = exitParkingDate;
             this.data.SaveChanges();
-            Decimal? dueAmount = this.CalculateDueAmount(vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, exitParkingDate);
+            Decimal? dueAmount = CalculationUtilities.CalculateDueAmount(this.data, vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, exitParkingDate);
             return new ApiOkResponse(vehicle, "Vehicle with registration number " + vehicle.RegistrationNumber + " exit the parking. Amount due: " + dueAmount);
         }
 
@@ -66,31 +66,11 @@ namespace ParkingSystem.Services
             return vehicleInfo;
         }
 
-        public Decimal? CalculateDueAmount(int vehicleCategoryId, int? vehicleDiscountId, DateTime vehicleEnterParkingDate, DateTime currentDateTime)
+        public decimal? CalculateDueAmount(int vehicleCategoryId, int? vehicleDiscountId, DateTime vehicleEnterParkingDate, DateTime currentDateTime)
         {
-            var tarrifs = this.data.Tarrifs.Where(a => a.CategoryId == vehicleCategoryId).ToList();
-            if (tarrifs != null && tarrifs.Count > 0)
-            {
-                Decimal? dueAmount = 0;
-                foreach (var tarrif in tarrifs)
-                {
-                    TimeSpan tarrifTime = new TimeSpan();
-
-                    tarrifTime = CalculationUtilities.GetSameDayTarrifTime(vehicleEnterParkingDate, currentDateTime, tarrif, tarrifTime);
-                    tarrifTime = CalculationUtilities.GetMiddleDaysTarrifTime(vehicleEnterParkingDate, currentDateTime, tarrif, tarrifTime);
-                    tarrifTime = CalculationUtilities.GetDayOfEntranceTarrifTime(vehicleEnterParkingDate, currentDateTime, tarrif, tarrifTime);
-
-                    dueAmount = dueAmount + (Decimal?)(tarrifTime.TotalSeconds / Constants.TOTAL_SECONDS_IN_HOUR) * tarrif.Price;
-                }
-
-                dueAmount = CalculationUtilities.ApplyDiscount(this.data.Discounts, vehicleDiscountId, dueAmount);
-                var dueAmountFormatted = FormatUtilities.FormatDecimal(dueAmount);
-                return dueAmountFormatted;
-            }
-
-            return null;
+            return CalculationUtilities.CalculateDueAmount(this.data, vehicleCategoryId, vehicleDiscountId, vehicleEnterParkingDate, currentDateTime);
         }
-
+         
         public int GetAvailableSpaces()
         {
             var groupedVehicles = this.data.Vehicles.Where(a => a.IsInParking == true).ToList().Select(a => new VehicleInfoResource() { CategoryId = a.CategoryId, RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, EnterParkingDate = a.EnterParkingDate }).GroupBy(a => a.CategoryId);
@@ -105,7 +85,7 @@ namespace ParkingSystem.Services
             var vehicles = data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoResource() { Id = a.VehicleId, RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate, CategoryName = GetCategoryName(a, categories), DiscountPercentage = GetDiscountPercentage(a, discounts) }).ToList();
             foreach (var vehicleInfoModel in vehicles)
             {
-                vehicleInfoModel.DueAmount = CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
+                vehicleInfoModel.DueAmount = CalculationUtilities.CalculateDueAmount(this.data, vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
             }
             return vehicles;
         }
@@ -130,7 +110,7 @@ namespace ParkingSystem.Services
             var vehicles = this.data.Vehicles.Where(a => a.DriverId == AppUserId).Select(a => new VehicleInfoResource() { RegistrationNumber = a.RegistrationNumber, CategoryId = a.CategoryId, DiscountId = a.DiscountId, ExitParkingDate = a.ExitParkingDate, EnterParkingDate = a.EnterParkingDate, IsInParking = a.IsInParking }).ToList();
             foreach (var vehicle in vehicles)
             {
-                vehicle.DueAmount = CalculateDueAmount(vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, DateTime.Now);
+                vehicle.DueAmount = CalculationUtilities.CalculateDueAmount(this.data, vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, DateTime.Now);
                 vehicle.Category = categoryService.GetCategoryById(vehicle.CategoryId);
                 vehicle.Discount = discountService.GetDiscountsById(vehicle.DiscountId);
             }
@@ -149,11 +129,12 @@ namespace ParkingSystem.Services
             {
                 selectedDiscounts = this.discountService.GetDiscounts().Select(a => a.DiscountId).Cast<int?>().ToArray();
             }
-            var test = Common.Sortings.DueAmount.ToString();
+            
+            var propertyInfo = typeof(VehicleInfoResource).GetProperty(((Sortings)sorting).ToString());
             var vehicles = data.Vehicles
-                .Where(a => a.RegistrationNumber.Contains(registrationNumber) &&
-                selectedCatecories.Contains(a.CategoryId) &&
-                selectedDiscounts.Contains(a.DiscountId == null ? Constants.NO_DISCOUNTS : a.DiscountId))
+                .Where(a => a.RegistrationNumber.Contains(registrationNumber)
+                    && selectedCatecories.Contains(a.CategoryId)
+                    && selectedDiscounts.Contains(a.DiscountId == null ? Constants.NO_DISCOUNTS : a.DiscountId))
                 .Select(a => new VehicleInfoResource()
                 {
                     Id = a.VehicleId,
@@ -162,14 +143,19 @@ namespace ParkingSystem.Services
                     CategoryId = a.CategoryId,
                     EnterParkingDate = a.EnterParkingDate,
                     CategoryName = GetCategoryName(a, categories),
-                    DiscountPercentage = GetDiscountPercentage(a, discounts)
-                    //DueAmount = CalculateDueAmount(a.CategoryId, a.DiscountId, a.EnterParkingDate, DateTime.Now)
+                    DiscountPercentage = GetDiscountPercentage(a, discounts),
+                    DueAmount = CalculationUtilities.CalculateDueAmount(this.data, a.CategoryId, a.DiscountId, a.EnterParkingDate, DateTime.Now)
                 }).ToList();
-            foreach (var vehicleInfoModel in vehicles)
-            {
-                vehicleInfoModel.DueAmount = CalculateDueAmount(vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
-            }
-            return vehicles;
+                if(sortingOrder == (int?)SortingOrders.Ascending)
+                {
+                    return vehicles.OrderBy(x => propertyInfo.GetValue(x, null)).ToList();
+                }
+                if(sortingOrder == (int?)SortingOrders.Descending)
+                {
+                    return vehicles.OrderByDescending(x => propertyInfo.GetValue(x, null)).ToList();
+                }
+
+                return vehicles;
         }
     }
 }

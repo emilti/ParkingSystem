@@ -43,7 +43,7 @@ const getDiscounts = async () => {
 
 const getSorting = async () => {
     let options = [
-        {"value": "", "label": "No sorting"},
+        {"value": '', "label": "No sorting"},
         {"value": "1", "label": "Due Amount"},
         {"value": "2", "label": "Registration Number"},
         {"value": "3", "label": "Entered Parking Date"}]
@@ -52,7 +52,7 @@ const getSorting = async () => {
 
 const getSortingOrder = async () => {
     let options = [
-        {"value": "", "label": "No sorting"},
+        {"value": '', "label": "No sorting"},
         {"value": "1", "label": "Ascending"},
         {"value": "2", "label": "Descending"}]
     return options

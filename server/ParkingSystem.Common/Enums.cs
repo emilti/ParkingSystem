@@ -10,7 +10,7 @@ namespace ParkingSystem.Common
     {
         DueAmount = 1,
         RegistrationNumber = 2,
-        EnteredParkingDate = 3
+        EnterParkingDate = 3
     }
 
     public enum SortingOrders

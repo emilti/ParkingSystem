@@ -20,8 +20,8 @@ class Vehicles extends React.Component {
             dateRange: [new Date(Date.now() - 86400000), new Date()],
             selectedCategories: [],
             selectedDiscounts: [],
-            selectedSorting: '',
-            selectedSortingOrder: ''
+            selectedSorting: null,
+            selectedSortingOrder: null
         }
 
         this.onCategoriesChange = this.onCategoriesChange.bind(this);
@@ -78,8 +78,7 @@ class Vehicles extends React.Component {
                 selectedSortingOrder: this.state.selectedSortingOrder,
                 token: token})
             };    
-            console.log(requestOptions)
-    console.log(requestOptions)
+        console.log(requestOptions)
         event.preventDefault();
         fetch('http://localhost:57740/parking/FilterVehicles', requestOptions)
         .then(async response => {
@@ -132,13 +131,24 @@ class Vehicles extends React.Component {
 
     changeSorting = event => {
         this.setState({
-            selectedSorting: event.target.value
+            selectedSorting: event.target.value === '' ? null : event.target.value
+        }, () => {
+            if(this.state.selectedSorting === null){
+                this.setState({
+                selectedSortingOrder: null
+                }) 
+            }else{
+                this.setState({
+                    selectedSortingOrder: "1"
+                })
+            }
         })
+        
     }
 
     changeSortingOrder = event => {
         this.setState({
-            selectedSortingOrder: event.target.value
+            selectedSortingOrder: event.target.value === '' ? null : event.target.value
         })
     }
 
@@ -147,12 +157,6 @@ class Vehicles extends React.Component {
            <div>
          <Form>
             <Form.Row className="align-items-center">
-                {/* <Col sm={2} className="my-1">
-                    <Form.Label htmlFor="inlineFormInputRegistrationumber" srOnly>
-                    Registration number
-                    </Form.Label>
-                    <Form.Control id="inlineFormInputRegistrationumber" placeholder="Registration number" value={this.registrationNumber} onChange={this.changeRegistrationNumber} />
-                </Col> */}
                 <Input field="" type="text"  value={this.registrationNumber} onChange={this.changeRegistrationNumber} />
                 <MultySelect field={"Categories"} collection={this.state.categories} value={this.selectedCategories} onChangeMultyselect={e => this.onCategoriesChange(e)}/>
                 <MultySelect field={"Discounts"} collection={this.state.discounts} value={this.selectedDiscounts} onChangeMultyselect={e => this.onDiscountsChange(e)}/>
@@ -162,10 +166,10 @@ class Vehicles extends React.Component {
             </Form.Row><br/>
             <Form.Row className="align-items-center">
                 <Col  sm={2}>
-                    <SingleSelectDropdown field="" options={this.state.sortings} onChange={this.changeSorting}/>
+                    <SingleSelectDropdown field="" options={this.state.sortings} selected={this.state.selectedSorting} onChange={this.changeSorting}/>
                 </Col>
                 <Col sm={2}>
-                    <SingleSelectDropdown field="" options={this.state.sortingOrders} onChange={this.changeSortingOrder}/>
+                    <SingleSelectDropdown field="" options={this.state.sortingOrders} selected={this.state.selectedSortingOrder} onChange={this.changeSortingOrder}/>
                 </Col>
             </Form.Row>
         </Form>  

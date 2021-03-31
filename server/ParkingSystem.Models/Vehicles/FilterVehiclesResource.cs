@@ -1,4 +1,6 @@
-﻿namespace ParkingSystem.Models.Vehicles
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ParkingSystem.Models.Vehicles
 {
     public class FilterVehiclesResource
     {
