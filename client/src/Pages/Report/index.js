@@ -3,10 +3,10 @@ import Vehicles from '../../Components/vehicles'
 import Menu from '../../Components/Menu'
 
 const Report = () => {
-  return (
+    return (
       <div>
-        <Menu/>
-        <Vehicles />
+          <Menu/>
+          <Vehicles />
       </div>
       
   )

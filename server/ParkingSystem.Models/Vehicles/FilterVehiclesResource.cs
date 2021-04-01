@@ -9,5 +9,7 @@ namespace ParkingSystem.Models.Vehicles
         public int?[] selectedDiscounts { get; set; }
         public int? selectedSorting { get; set; }
         public int? selectedSortingOrder { get; set; }
+        public int selectedPage { get; set; }
+        public int selectedItemsPerPage { get; set; }
     }
 }

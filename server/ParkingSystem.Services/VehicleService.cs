@@ -70,7 +70,7 @@ namespace ParkingSystem.Services
         {
             return CalculationUtilities.CalculateDueAmount(this.data, vehicleCategoryId, vehicleDiscountId, vehicleEnterParkingDate, currentDateTime);
         }
-         
+
         public int GetAvailableSpaces()
         {
             var groupedVehicles = this.data.Vehicles.Where(a => a.IsInParking == true).ToList().Select(a => new VehicleInfoResource() { CategoryId = a.CategoryId, RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, EnterParkingDate = a.EnterParkingDate }).GroupBy(a => a.CategoryId);
@@ -117,7 +117,7 @@ namespace ParkingSystem.Services
             return vehicles;
         }
 
-        public List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int?[] selectedDiscounts, int? sorting, int? sortingOrder)
+        public List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int?[] selectedDiscounts, int? sorting, int? sortingOrder, int page, int itemsPerPage)
         {
             var categories = this.categoryService.GetCategories();
             var discounts = this.discountService.GetDiscounts();
@@ -129,33 +129,33 @@ namespace ParkingSystem.Services
             {
                 selectedDiscounts = this.discountService.GetDiscounts().Select(a => a.DiscountId).Cast<int?>().ToArray();
             }
-            
-            var propertyInfo = typeof(VehicleInfoResource).GetProperty(((Sortings)sorting).ToString());
-            var vehicles = data.Vehicles
-                .Where(a => a.RegistrationNumber.Contains(registrationNumber)
-                    && selectedCatecories.Contains(a.CategoryId)
-                    && selectedDiscounts.Contains(a.DiscountId == null ? Constants.NO_DISCOUNTS : a.DiscountId))
-                .Select(a => new VehicleInfoResource()
-                {
-                    Id = a.VehicleId,
-                    RegistrationNumber = a.RegistrationNumber,
-                    DiscountId = a.DiscountId,
-                    CategoryId = a.CategoryId,
-                    EnterParkingDate = a.EnterParkingDate,
-                    CategoryName = GetCategoryName(a, categories),
-                    DiscountPercentage = GetDiscountPercentage(a, discounts),
-                    DueAmount = CalculationUtilities.CalculateDueAmount(this.data, a.CategoryId, a.DiscountId, a.EnterParkingDate, DateTime.Now)
-                }).ToList();
-                if(sortingOrder == (int?)SortingOrders.Ascending)
-                {
-                    return vehicles.OrderBy(x => propertyInfo.GetValue(x, null)).ToList();
-                }
-                if(sortingOrder == (int?)SortingOrders.Descending)
-                {
-                    return vehicles.OrderByDescending(x => propertyInfo.GetValue(x, null)).ToList();
-                }
 
-                return vehicles;
+            var propertyInfo = sorting != null ? typeof(VehicleInfoResource).GetProperty(((Sortings)sorting).ToString()) : null;
+            var vehicles = data.Vehicles
+            .Where(a => a.RegistrationNumber.Contains(registrationNumber)
+                && selectedCatecories.Contains(a.CategoryId)
+                && selectedDiscounts.Contains(a.DiscountId == null ? Constants.NO_DISCOUNTS : a.DiscountId))
+            .Select(a => new VehicleInfoResource()
+            {
+                Id = a.VehicleId,
+                RegistrationNumber = a.RegistrationNumber,
+                DiscountId = a.DiscountId,
+                CategoryId = a.CategoryId,
+                EnterParkingDate = a.EnterParkingDate,
+                CategoryName = GetCategoryName(a, categories),
+                DiscountPercentage = GetDiscountPercentage(a, discounts),
+                DueAmount = CalculationUtilities.CalculateDueAmount(this.data, a.CategoryId, a.DiscountId, a.EnterParkingDate, DateTime.Now)
+            }).ToList();
+            if (sortingOrder == (int?)SortingOrders.Ascending && propertyInfo != null)
+            {
+                return vehicles.OrderBy(x => propertyInfo.GetValue(x, null)).Skip(itemsPerPage *(page - 1)).Take(itemsPerPage).ToList();
+            }
+            if (sortingOrder == (int?)SortingOrders.Descending && propertyInfo != null)
+            {
+                return vehicles.OrderByDescending(x => propertyInfo.GetValue(x, null)).Skip(itemsPerPage * (page - 1)).Take(itemsPerPage).ToList();
+            }
+
+            return vehicles.Skip(itemsPerPage * (page - 1)).Take(itemsPerPage).ToList();
         }
     }
 }

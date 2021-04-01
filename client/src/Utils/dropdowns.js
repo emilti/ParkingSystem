@@ -57,4 +57,12 @@ const getSortingOrder = async () => {
         {"value": "2", "label": "Descending"}]
     return options
 }
-export {buildCategoriesDropdown, buildDiscountsDropdown, getSorting, getSortingOrder}
+
+const getPageOptions = async () => {
+    let options = [
+        {"value": '10', "label": "10"},
+        {"value": "20", "label": "20"},
+        {"value": "50", "label": "50"}]
+    return options
+}
+export {buildCategoriesDropdown, buildDiscountsDropdown, getSorting, getSortingOrder, getPageOptions}
