@@ -8,11 +8,14 @@ import {Form, Col, Button} from 'react-bootstrap'
 import {buildCategoriesDropdown, buildDiscountsDropdown, getSorting, getSortingOrder, getPageOptions} from '../../Utils/dropdowns'
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 import CustomPagination from '../../Components/CustomPagination'
+import Styles from './index.module.css'
+
 class Vehicles extends React.Component {
     constructor(props){
         super(props)
         this.state = {
             vehicles: [],
+            totalVehiclesCount: 0,
             registrationNumber: '',
             categories: [] ,
             discounts: [],
@@ -24,12 +27,17 @@ class Vehicles extends React.Component {
             selectedDiscounts: [],
             selectedSorting: null,
             selectedSortingOrder: null,
-            selectedItemsPerPage: 10,
+            selectedItemsPerPage: 50,
             pages: 1,
             selectedPage: 1
         }
 
         this.onCategoriesChange = this.onCategoriesChange.bind(this);
+        this.onDiscountsChange = this.onDiscountsChange.bind(this);
+        this.onRegistrationNumberChange = this.onRegistrationNumberChange.bind(this);
+        this.onSortingChange = this.onSortingChange.bind(this)
+        this.onSortingOrderChange = this.onSortingOrderChange.bind(this)
+        this.onItemsPerPageChange = this.onItemsPerPageChange.bind(this)
     }
     
     componentDidMount(){
@@ -39,6 +47,7 @@ class Vehicles extends React.Component {
         getSortingOrder().then((value) => {this.setState({sortingOrders: value})})
         getPageOptions().then((value) => {this.setState({itemsPerPageOptions: value})})
         this.getVehicles()
+        
     }
     
     getVehicles = async() => {
@@ -50,30 +59,30 @@ class Vehicles extends React.Component {
         const promise = await fetch('http://localhost:57740/parking/getvehicles', requestOptions)
         const vehicles = await promise.json()
         this.setState({
-            vehicles: vehicles            
+            vehicles: vehicles,
+            totalVehiclesCount: vehicles.length,            
             }, () => {
                 this.setState({pages: Math.ceil(vehicles.length / this.state.selectedItemsPerPage)})
         })
     }
 
-    renderVehicles(){
+    renderVehicles = () =>{
         const {
             vehicles, 
             pages
         } = this.state 
         return vehicles.map((v, index) => {
-            return (<div key={index}>
-                <Vehicle registrationNumber = {v.registrationNumber} enterParkingDate={v.enterParkingDate} categoryName={v.categoryName} discountPercentage={v.discountPercentage} dueAmount={v.dueAmount} index={index}/>
-            </div>)
-       })
+                return (
+                        <div key={index}>
+                            <Vehicle registrationNumber = {v.registrationNumber} enterParkingDate={v.enterParkingDate} categoryName={v.categoryName} discountPercentage={v.discountPercentage} dueAmount={v.dueAmount} index={index}/>
+                        </div>
+                    )
+            }).concat(this.renderPagination())
     }
 
-    changeRegistrationNumber = event => {
-        this.setState({
-            registrationNumber: event.target.value
-        })
+    renderPagination = () => {
+        return <CustomPagination pages={this.state.pages} active={this.state.selectedPage} handleSubmit={this.handleSubmit}/>
     }
-
 
     handleSubmit = (event, page) => {
         var token = getCookie('x-auth-token')
@@ -114,6 +123,13 @@ class Vehicles extends React.Component {
         });
     }
 
+    onRegistrationNumberChange = event => {
+        this.setState({
+            registrationNumber: event.target.value
+        })
+    }
+
+
     onChangeEnterDateRange = (date) =>{
         if(date != null){
           this.setState(dateRange => ({dateRange: [ date[0], date[1]]}));
@@ -141,7 +157,7 @@ class Vehicles extends React.Component {
         this.setState({selectedDiscounts: selected})  
     }
 
-    changeSorting = event => {
+    onSortingChange = event => {
         this.setState({
             selectedSorting: event.target.value === '' ? null : event.target.value
         }, () => {
@@ -155,32 +171,31 @@ class Vehicles extends React.Component {
                 })
             }
         })
-        
     }
 
-    changeSortingOrder = event => {
+    onSortingOrderChange = event => {
         this.setState({
             selectedSortingOrder: event.target.value === '' ? null : event.target.value
         })
     }
 
-    changeItemsPerPage = event => {
+    onItemsPerPageChange = event => {
         this.setState({
             selectedItemsPerPage: event.target.value
         },
         () => {
-            this.setState({pages: Math.ceil(this.state.vehicles.length / this.state.selectedItemsPerPage)})
-        },
-        this.renderVehicles())
+            this.setState({pages: Math.ceil(this.state.totalVehiclesCount / this.state.selectedItemsPerPage)}, 
+            () => this.renderVehicles())
+            }
+        )
     }
-
 
     render() {
         return(
             <div>
                 <Form>
                     <Form.Row className="align-items-center">
-                        <Input field="" type="text"  value={this.registrationNumber} onChange={this.changeRegistrationNumber} />
+                        <Input field="" type="text"  value={this.registrationNumber} onChange={this.onRegistrationNumberChange} />
                         <MultySelect field={"Categories"} collection={this.state.categories} value={this.selectedCategories} onChangeMultyselect={e => this.onCategoriesChange(e)}/>
                         <MultySelect field={"Discounts"} collection={this.state.discounts} value={this.selectedDiscounts} onChangeMultyselect={e => this.onDiscountsChange(e)}/>
                         <Col sm={4}>
@@ -189,21 +204,23 @@ class Vehicles extends React.Component {
                     </Form.Row><br/>
                     <Form.Row className="align-items-center">
                         <Col  sm={2}>
-                            <SingleSelectDropdown field="" options={this.state.sortings} selected={this.state.selectedSorting} onChange={this.changeSorting}/>
+                            <SingleSelectDropdown field="" options={this.state.sortings} selected={this.state.selectedSorting} onChange={this.onSortingChange}/>
                         </Col>
                         <Col sm={2}>
-                            <SingleSelectDropdown field="" options={this.state.sortingOrders} selected={this.state.selectedSortingOrder} onChange={this.changeSortingOrder}/>
+                            <SingleSelectDropdown field="" options={this.state.sortingOrders} selected={this.state.selectedSortingOrder} onChange={this.onSortingOrderChange}/>
                         </Col>
                         <Col sm={2}>
-                            <SingleSelectDropdown field="" options={this.state.itemsPerPageOptions} selected={this.state.selectedPage} onChange={this.changeItemsPerPage}/>
+                            <SingleSelectDropdown field="" options={this.state.itemsPerPageOptions} selected={this.state.selectedItemsPerPage} onChange={this.onItemsPerPageChange}/>
                         </Col>
                     </Form.Row>
                 </Form>  
                 <Button variant="success" type="submit" onClick={this.handleSubmit}>Filter visits</Button>
+                <div className={Styles.containerPosition}>
                 {
                    this.renderVehicles()
                 }
-                   <CustomPagination pages={this.state.pages} active={this.state.selectedPage} handleSubmit={this.handleSubmit}/>
+                </div>
+                
                
             </div>
        )

@@ -2,6 +2,7 @@
 import React, {Component} from 'react'
 import {Pagination, Container, Row, Col} from 'react-bootstrap'
 import Styles from './index.module.css'
+
 const CustomPagination = ({pages, active, handleSubmit}) => {
     const pageItems = []
     
@@ -17,7 +18,7 @@ const CustomPagination = ({pages, active, handleSubmit}) => {
     }
     
     return(
-        <Container>
+        <Container className={Styles.containerPosition}>
             <Row className='mt-5 pt-5 my-auto'>
                 <Col className="d-flex ">
                 <Pagination size="sm" className={Styles.center}>
