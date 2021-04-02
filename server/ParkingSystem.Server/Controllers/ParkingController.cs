@@ -124,7 +124,7 @@ namespace ParkingSystem.Server.Controllers
         [Authorize(Roles = "Administrator")]
         public IActionResult FilterVehicles([FromBody]FilterVehiclesResource filterVehiclesResource)
         {
-            return this.Ok(this.vehicleService.GetFilteredVehicles(filterVehiclesResource.registrationNumber, filterVehiclesResource.selectedCategories, filterVehiclesResource.selectedDiscounts, filterVehiclesResource.selectedSorting, filterVehiclesResource.selectedSortingOrder, filterVehiclesResource.selectedPage, filterVehiclesResource.selectedItemsPerPage));
+            return this.Ok(this.vehicleService.GetFilteredVehicles(filterVehiclesResource.registrationNumber, filterVehiclesResource.selectedCategories, filterVehiclesResource.selectedDiscounts, filterVehiclesResource.selectedDateRange, filterVehiclesResource.selectedSorting, filterVehiclesResource.selectedSortingOrder, filterVehiclesResource.selectedPage, filterVehiclesResource.selectedItemsPerPage));
         }
     }
 }

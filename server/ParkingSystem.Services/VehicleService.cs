@@ -117,7 +117,7 @@ namespace ParkingSystem.Services
             return vehicles;
         }
 
-        public List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int?[] selectedDiscounts, int? sorting, int? sortingOrder, int page, int itemsPerPage)
+        public List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int?[] selectedDiscounts, DateTime[] dateRange, int? sorting, int? sortingOrder, int page, int itemsPerPage)
         {
             var categories = this.categoryService.GetCategories();
             var discounts = this.discountService.GetDiscounts();
@@ -134,7 +134,8 @@ namespace ParkingSystem.Services
             var vehicles = data.Vehicles
             .Where(a => a.RegistrationNumber.Contains(registrationNumber)
                 && selectedCatecories.Contains(a.CategoryId)
-                && selectedDiscounts.Contains(a.DiscountId == null ? Constants.NO_DISCOUNTS : a.DiscountId))
+                && selectedDiscounts.Contains(a.DiscountId == null ? Constants.NO_DISCOUNTS : a.DiscountId)
+                && dateRange[0] <= a.EnterParkingDate && a.EnterParkingDate <= dateRange[1])
             .Select(a => new VehicleInfoResource()
             {
                 Id = a.VehicleId,

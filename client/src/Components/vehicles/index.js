@@ -9,7 +9,7 @@ import {buildCategoriesDropdown, buildDiscountsDropdown, getSorting, getSortingO
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 import CustomPagination from '../../Components/CustomPagination'
 import Styles from './index.module.css'
-
+import '../../main.9ccb599a.css'
 class Vehicles extends React.Component {
     constructor(props){
         super(props)
@@ -22,7 +22,7 @@ class Vehicles extends React.Component {
             sortings: [],
             sortingOrders: [],
             itemsPerPageOptions: [],
-            dateRange: [new Date(Date.now() - 86400000), new Date()],
+            selectedDateRange: [new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate()), new Date()],
             selectedCategories: [],
             selectedDiscounts: [],
             selectedSorting: null,
@@ -94,6 +94,7 @@ class Vehicles extends React.Component {
                 registrationNumber: this.state.registrationNumber,
                 selectedCategories: this.state.selectedCategories,
                 selectedDiscounts: this.state.selectedDiscounts,
+                selectedDateRange: this.state.selectedDateRange,
                 selectedSorting: this.state.selectedSorting,
                 selectedSortingOrder: this.state.selectedSortingOrder,
                 selectedItemsPerPage: this.state.selectedItemsPerPage,
@@ -101,6 +102,7 @@ class Vehicles extends React.Component {
                 token: token})
             };    
         event.preventDefault();
+        console.log(requestOptions)
         fetch('http://localhost:57740/parking/FilterVehicles', requestOptions)
         .then(async response => {
             if (!response.ok) {
@@ -132,13 +134,20 @@ class Vehicles extends React.Component {
 
     onChangeEnterDateRange = (date) =>{
         if(date != null){
-          this.setState(dateRange => ({dateRange: [ date[0], date[1]]}));
+          this.setState({selectedDateRange: ([this.convertToUtc(date[0]), this.convertToUtc(date[1])])});
         }
         else{
-            this.setState({dateRange: [new Date(Date.now() - 86400000), new Date()]})
+            this.setState({selectedDateRange: [new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate()), new Date()]})
         }
     }
 
+    convertToUtc(date){
+        var now_utc =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+         return new Date(now_utc);
+    }
+
+ 
     onCategoriesChange = (e) =>{
         const selected=[];
         let selectedOption=(e.target.selectedOptions);
@@ -199,7 +208,8 @@ class Vehicles extends React.Component {
                         <MultySelect field={"Categories"} collection={this.state.categories} value={this.selectedCategories} onChangeMultyselect={e => this.onCategoriesChange(e)}/>
                         <MultySelect field={"Discounts"} collection={this.state.discounts} value={this.selectedDiscounts} onChangeMultyselect={e => this.onDiscountsChange(e)}/>
                         <Col sm={4}>
-                            <DateRangePicker onChange={this.onChangeEnterDateRange} value={this.state.dateRange}/>
+                            <div>Enter parking date:</div>
+                            <DateRangePicker onChange={this.onChangeEnterDateRange} value={this.state.selectedDateRange}/>
                         </Col>
                     </Form.Row><br/>
                     <Form.Row className="align-items-center">
