@@ -2,3 +2,8 @@
     position:absolute;
     width: 100%;
   }
+
+.topAlign{
+  align-self: flex-end
+}
+ 

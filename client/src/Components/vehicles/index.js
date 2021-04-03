@@ -214,11 +214,25 @@ class Vehicles extends React.Component {
         )
     }
 
+    clearFilters = () => {
+        this.setState({
+            selectedDateRange: [new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate()), new Date()],
+            selectedCategories: [],
+            selectedDiscounts: [],
+            selectedIsInParkingOption: 'all',
+            selectedSorting: null,
+            selectedSortingOrder: null,
+            selectedItemsPerPage: 50,
+            selectedPage: 1
+        })
+    }
+
     render() {
         return(
             <div>
-                <Form>
+                <Form className="mb-4">
                     <Form.Row className="align-items-top">
+                        <Col sm={2}></Col>
                         <MultySelect field={"Categories:"} collection={this.state.categories} value={this.selectedCategories} onChangeMultyselect={e => this.onCategoriesChange(e)}/>
                         <MultySelect field={"Discounts:"} collection={this.state.discounts} value={this.selectedDiscounts} onChangeMultyselect={e => this.onDiscountsChange(e)}/>
                         <Col sm={2}>
@@ -231,6 +245,7 @@ class Vehicles extends React.Component {
                         </Col>
                     </Form.Row><br/>
                     <Form.Row className="align-items-center">
+                        <Col sm={2}></Col>
                         <Col  sm={2} className={"pl-4"}>
                             <FilterSingleSelectDropdown field="Filter by:" options={this.state.sortings} selected={this.state.selectedSorting} onChange={this.onSortingChange}/>
                         </Col>
@@ -240,9 +255,15 @@ class Vehicles extends React.Component {
                         <Col sm={2} className={"pl-4"}>
                             <FilterSingleSelectDropdown field="Show:" options={this.state.itemsPerPageOptions} selected={this.state.selectedItemsPerPage} onChange={this.onItemsPerPageChange}/>
                         </Col>
+                        <Col sm={1} className={["pl-4", Styles.topAlign].join(' ')} >
+                            <Button variant="success" type="submit" onClick={this.handleSubmit}>Filter visits</Button>
+                        </Col>
+                        <Col sm={1} className={["pl-4", Styles.topAlign].join(' ')} >
+                            <Button variant="success" type="reset" onClick={this.clearFilters}>Clear filters</Button>
+                        </Col>
                     </Form.Row>
                 </Form>  
-                <Button variant="success" type="submit" onClick={this.handleSubmit}>Filter visits</Button>
+                
                 <div className={Styles.containerPosition}>
                 {
                    this.renderVehicles()
