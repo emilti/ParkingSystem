@@ -10,6 +10,12 @@
     float: left;
 }
 
+.cellRegistrationNumber{
+    width:20%;
+    border-bottom: 1px solid black;
+    float: left;
+}
+
 .row{
     width:80%;
     margin-left: 10%
@@ -21,11 +27,5 @@
 
 .topRow{    
     border-top: 1px solid black;
-}
-
-.cellRegistrationNumber{
-    width:20%;
-    border-bottom: 1px solid black;
-    float: left;
 }
 

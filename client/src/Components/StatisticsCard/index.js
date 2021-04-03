@@ -4,7 +4,6 @@ import useParkingData from '../../Hooks/useParkingData'
 import "./styles.css"
 
 const StatisticsCard = ({title, value, bodyStyles}) =>{
-    const {availableSpaces, totalParkingSpaces, categories, discounts} = useParkingData()
     
 return (
     <Card className={["text-center"].join(" ")}>

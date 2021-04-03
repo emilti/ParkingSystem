@@ -118,6 +118,14 @@ namespace ParkingSystem.Server.Controllers
             var discounts = discountService.GetDiscounts();
             return Ok(discounts);
         }
+
+        [HttpPost]
+        [Route("[action]")]
+        [Authorize(Roles = "Administrator")]
+        public IActionResult FilterVehicles([FromBody]FilterVehiclesResource filterVehiclesResource)
+        {
+            return this.Ok(this.vehicleService.GetFilteredVehicles(filterVehiclesResource.registrationNumber, filterVehiclesResource.selectedCategories, filterVehiclesResource.selectedDiscounts, filterVehiclesResource.selectedIsInParkingOption, filterVehiclesResource.selectedDateRange, filterVehiclesResource.selectedSorting, filterVehiclesResource.selectedSortingOrder, filterVehiclesResource.selectedPage, filterVehiclesResource.selectedItemsPerPage));
+        }
     }
 }
 

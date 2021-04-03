@@ -1,13 +1,11 @@
 import React, {Component} from 'react'
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Jumbotron from 'react-bootstrap/Jumbotron';
-import Input from '../../Components/Input';
-import SingleSelectDropdown from '../../Components/SingleSelectDropdown';
+import {Container, Row, Col, Jumbotron, Button} from 'react-bootstrap'
+import Input from '../../Components/Input'
+import SingleSelectDropdown from '../../Components/SingleSelectDropdown'
 import Menu from '../../Components/Menu'
 import getCookie from '../../Utils/cookie'
+import {buildCategoriesDropdown, buildDiscountsDropdown} from '../../Utils/dropdowns'
+import {validateRegistrationNumber} from '../../Utils/validator.js'
 class EnterVehicle extends Component {
     constructor(props){
         super(props)
@@ -15,47 +13,29 @@ class EnterVehicle extends Component {
             categories: [],
             discounts: [],
             categoryId: '',
-            discountId: '',
+            discountId: null,
             registrationNumber: '',
             registrationNumberError: ''
         }
     }
 
-    validateRegistrationNumber = event => {
-        if(event.target.value === ''){
-            this.setState({ registrationNumberError: "Invalid registration number." })
-        } else {
-            this.setState({ registrationNumberError: "" })
-        }
-    }
-
-    getCategories = async() => {
-        const promise = await fetch('http://localhost:57740/parking/getcategories')
-        const categories = await promise.json()
-        console.log(categories)
-        let options = categories.map(c => ({
-          "value" : c.categoryId,
-          "label" : c.name + " (Occupied spaces: " + c.parkingSpaces + ")"
-        }))
-        options.splice(0, 0, {"value": "", "label": "Select category" })
-        this.setState({ categories: options })
-    }
-
-    getDiscounts = async() => {
-        const promise = await fetch('http://localhost:57740/parking/getdiscounts')
-        const discounts = await promise.json()
-        let options = [];
-        options = discounts.map(d => ({
-          "value" : d.discountId,
-          "label" : d.name + " " + d.discountPercentage + "%"
-        }))
-        options.splice(0, 0, {"value": "", "label": "Select discount" })
-        this.setState({ discounts: options })
-    }
-
+    // validateRegistrationNumber = event => {
+    //     if(event.target.value === ''){
+    //         this.setState({ registrationNumberError: "Invalid registration number." })
+    //     } else {
+    //         this.setState({ registrationNumberError: "" })
+    //     }
+    // }
+    
     componentDidMount(){
-        this.getCategories()
-        this.getDiscounts()
+        buildCategoriesDropdown("Enter vehicle").then((value) => { 
+            this.setState({categories: [...this.state.categories, ...value]
+            })
+        })
+       
+        buildDiscountsDropdown("Enter vehicle").then((value) => { 
+            this.setState({discounts: [...this.state.discounts, ...value]})
+        })
     }
 
     changeCategory = event => {
@@ -107,6 +87,10 @@ class EnterVehicle extends Component {
         });
     }
 
+    updateRegistrationNumberError = (registrationNumberError) => {
+        this.setState({registrationNumberError})
+    }
+
     render(){
         const{
             categoryId,
@@ -122,10 +106,10 @@ class EnterVehicle extends Component {
                         <Col></Col>
                         <Col md={ 8 }>
                             <Jumbotron>
-                                <form onSubmit={ this.handleSubmit }>
-                                    <Input field="Registration Number" type="text" onBlur={ this.validateRegistrationNumber } value={ registrationNumber } onChange={ this.changeRegistrationNumber } error={ registrationNumberError }></Input>
-                                    <SingleSelectDropdown field="Category" options={ this.state.categories } onChange={ this.changeCategory }/>
-                                    <SingleSelectDropdown field="Discount" options={ this.state.discounts } onChange={ this.changeDiscount }/>
+                                <form onSubmit={this.handleSubmit}>
+                                    <Input field="Registration Number" type="text" onBlur={e => validateRegistrationNumber(e, this.updateRegistrationNumberError)} value={registrationNumber} onChange={this.changeRegistrationNumber} error={registrationNumberError}></Input>
+                                    <SingleSelectDropdown field="Category" options={this.state.categories} onChange={this.changeCategory}/>
+                                    <SingleSelectDropdown field="Discount" options={this.state.discounts} onChange={this.changeDiscount}/>
                                     <Button variant="success" type="submit">Enter vehicle</Button>
                                 </form>
                             </Jumbotron>

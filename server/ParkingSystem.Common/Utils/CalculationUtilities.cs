@@ -1,4 +1,5 @@
-﻿using ParkingSystem.Data.Models;
+﻿using ParkingSystem.Data;
+using ParkingSystem.Data.Models;
 using ParkingSystem.Models.Categories;
 using ParkingSystem.Models.Vehicles;
 using System;
@@ -27,6 +28,31 @@ namespace ParkingSystem.Common.Utils
             discountPercentage = discountPercentage != null ? discountPercentage : 0;
             dueAmount = dueAmount - dueAmount * discountPercentage / 100;
             return dueAmount;
+        }
+
+        public static Decimal? CalculateDueAmount(ParkingSystemDbContext data, int vehicleCategoryId, int? vehicleDiscountId, DateTime vehicleEnterParkingDate, DateTime currentDateTime)
+        {
+            var tarrifs = data.Tarrifs.Where(a => a.CategoryId == vehicleCategoryId).ToList();
+            if (tarrifs != null && tarrifs.Count > 0)
+            {
+                Decimal? dueAmount = 0;
+                foreach (var tarrif in tarrifs)
+                {
+                    TimeSpan tarrifTime = new TimeSpan();
+
+                    tarrifTime = CalculationUtilities.GetSameDayTarrifTime(vehicleEnterParkingDate, currentDateTime, tarrif, tarrifTime);
+                    tarrifTime = CalculationUtilities.GetMiddleDaysTarrifTime(vehicleEnterParkingDate, currentDateTime, tarrif, tarrifTime);
+                    tarrifTime = CalculationUtilities.GetDayOfEntranceTarrifTime(vehicleEnterParkingDate, currentDateTime, tarrif, tarrifTime);
+
+                    dueAmount = dueAmount + (Decimal?)(tarrifTime.TotalSeconds / Constants.TOTAL_SECONDS_IN_HOUR) * tarrif.Price;
+                }
+
+                dueAmount = CalculationUtilities.ApplyDiscount(data.Discounts, vehicleDiscountId, dueAmount);
+                var dueAmountFormatted = FormatUtilities.FormatDecimal(dueAmount);
+                return dueAmountFormatted;
+            }
+
+            return null;
         }
         public static TimeSpan GetSameDayTarrifTime(DateTime enteredParkingDate, DateTime currentDateTime, Tarrif tarrif, TimeSpan tarrifTime)
         {

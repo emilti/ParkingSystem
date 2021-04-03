@@ -16,5 +16,6 @@ namespace ParkingSystem.Services.Interfaces
         List<VehicleInfoResource> GetVehicles();
         List<VehicleInfoResource> GetVehiclesInParking();
         List<VehicleInfoResource> GetVehiclesByUser(Guid AppUserId);
+        List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int?[] selectedDiscounts, bool? isInParking, DateTime[] dateRange, int? sorting, int? sortingOrder, int page, int itemsPerPage);
     }
 }
