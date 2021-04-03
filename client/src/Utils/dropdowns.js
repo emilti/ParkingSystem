@@ -41,6 +41,14 @@ const getDiscounts = async () => {
     return options
 }
 
+const getIsInParkingOptions = async () => {
+    let options = [
+        {"value": 'all', "label": "All"},
+        {"value": true, "label": "Yes"},
+        {"value": false, "label": "No"}]
+    return options
+}
+
 const getSorting = async () => {
     let options = [
         {"value": '', "label": "No sorting"},
@@ -65,4 +73,6 @@ const getPageOptions = async () => {
         {"value": "50", "label": "50"}]
     return options
 }
-export {buildCategoriesDropdown, buildDiscountsDropdown, getSorting, getSortingOrder, getPageOptions}
+
+
+export {buildCategoriesDropdown, buildDiscountsDropdown, getIsInParkingOptions, getSorting, getSortingOrder, getPageOptions}

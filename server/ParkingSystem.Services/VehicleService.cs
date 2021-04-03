@@ -117,10 +117,11 @@ namespace ParkingSystem.Services
             return vehicles;
         }
 
-        public List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int?[] selectedDiscounts, DateTime[] dateRange, int? sorting, int? sortingOrder, int page, int itemsPerPage)
+        public List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int?[] selectedDiscounts, bool? isInParking, DateTime[] dateRange, int? sorting, int? sortingOrder, int page, int itemsPerPage)
         {
             var categories = this.categoryService.GetCategories();
             var discounts = this.discountService.GetDiscounts();
+            //bool[] isInParkingCollection = new bool[]();
             if (selectedCatecories.Contains(Constants.ALL_CATEGORIES) || selectedCatecories.Count() == 0)
             {
                 selectedCatecories = this.categoryService.GetCategories().Select(a => a.CategoryId).ToArray();
@@ -129,12 +130,17 @@ namespace ParkingSystem.Services
             {
                 selectedDiscounts = this.discountService.GetDiscounts().Select(a => a.DiscountId).Cast<int?>().ToArray();
             }
+            if(isInParking == null)
+            {
+
+            }
 
             var propertyInfo = sorting != null ? typeof(VehicleInfoResource).GetProperty(((Sortings)sorting).ToString()) : null;
             var vehicles = data.Vehicles
             .Where(a => a.RegistrationNumber.Contains(registrationNumber)
                 && selectedCatecories.Contains(a.CategoryId)
                 && selectedDiscounts.Contains(a.DiscountId == null ? Constants.NO_DISCOUNTS : a.DiscountId)
+                && (isInParking == null || isInParking == a.IsInParking)
                 && dateRange[0] <= a.EnterParkingDate && a.EnterParkingDate <= dateRange[1])
             .Select(a => new VehicleInfoResource()
             {

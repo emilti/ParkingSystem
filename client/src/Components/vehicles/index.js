@@ -5,10 +5,11 @@ import MultySelect from '../MultySelect'
 import SingleSelectDropdown from '../SingleSelectDropdown'
 import getCookie from '../../Utils/cookie'
 import {Form, Col, Button} from 'react-bootstrap'
-import {buildCategoriesDropdown, buildDiscountsDropdown, getSorting, getSortingOrder, getPageOptions} from '../../Utils/dropdowns'
+import {buildCategoriesDropdown, buildDiscountsDropdown, getIsInParkingOptions, getSorting, getSortingOrder, getPageOptions} from '../../Utils/dropdowns'
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 import CustomPagination from '../../Components/CustomPagination'
 import FilterInput from '../../Components/FilterInput'
+import FilterSingleSelectDropdown from '../FilterSingleSelectDropdown'
 import Styles from './index.module.css'
 import '../../main.9ccb599a.css'
 class Vehicles extends React.Component {
@@ -20,12 +21,14 @@ class Vehicles extends React.Component {
             registrationNumber: '',
             categories: [] ,
             discounts: [],
+            isInParkingOptions: [],
             sortings: [],
             sortingOrders: [],
             itemsPerPageOptions: [],
             selectedDateRange: [new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate()), new Date()],
             selectedCategories: [],
             selectedDiscounts: [],
+            selectedIsInParkingOption: 'all',
             selectedSorting: null,
             selectedSortingOrder: null,
             selectedItemsPerPage: 50,
@@ -44,6 +47,7 @@ class Vehicles extends React.Component {
     componentDidMount(){
         buildCategoriesDropdown("Filter vehicles").then((value) => {this.setState({categories: value})})
         buildDiscountsDropdown("Filter vehicles").then((value) => {this.setState({discounts: value})})
+        getIsInParkingOptions().then((value) => {this.setState({isInParkingOptions: value})})
         getSorting().then((value) => {this.setState({sortings: value})})
         getSortingOrder().then((value) => {this.setState({sortingOrders: value})})
         getPageOptions().then((value) => {this.setState({itemsPerPageOptions: value})})
@@ -99,6 +103,7 @@ class Vehicles extends React.Component {
                 registrationNumber: this.state.registrationNumber,
                 selectedCategories: this.state.selectedCategories,
                 selectedDiscounts: this.state.selectedDiscounts,
+                selectedIsInParkingOption: (this.state.selectedIsInParkingOption != 'all' ? JSON.parse(this.state.selectedIsInParkingOption) : null),
                 selectedDateRange: this.state.selectedDateRange,
                 selectedSorting: this.state.selectedSorting,
                 selectedSortingOrder: this.state.selectedSortingOrder,
@@ -107,7 +112,6 @@ class Vehicles extends React.Component {
                 token: token})
             };    
         event.preventDefault();
-        console.log(requestOptions)
         fetch('http://localhost:57740/parking/FilterVehicles', requestOptions)
         .then(async response => {
             if (!response.ok) {
@@ -153,7 +157,7 @@ class Vehicles extends React.Component {
     }
 
  
-    onCategoriesChange = (e) =>{
+    onCategoriesChange = (e) => {
         const selected=[];
         let selectedOption=(e.target.selectedOptions);
         for (let i = 0; i < selectedOption.length; i++){
@@ -162,13 +166,19 @@ class Vehicles extends React.Component {
         this.setState({selectedCategories: selected}) 
     }
 
-    onDiscountsChange = (e) =>{
+    onDiscountsChange = (e) => {
         const selected=[];
         let selectedOption=(e.target.selectedOptions);
         for (let i = 0; i < selectedOption.length; i++){
             selected.push(selectedOption.item(i).value)
         }
         this.setState({selectedDiscounts: selected})  
+    }
+
+    onIsInParkingChange = (event) => {
+        this.setState({
+            selectedIsInParkingOption: event.target.value
+        })
     }
 
     onSortingChange = event => {
@@ -211,21 +221,24 @@ class Vehicles extends React.Component {
                     <Form.Row className="align-items-top">
                         <MultySelect field={"Categories:"} collection={this.state.categories} value={this.selectedCategories} onChangeMultyselect={e => this.onCategoriesChange(e)}/>
                         <MultySelect field={"Discounts:"} collection={this.state.discounts} value={this.selectedDiscounts} onChangeMultyselect={e => this.onDiscountsChange(e)}/>
-                        <FilterInput type="text" field="Registration Number:"  value={this.registrationNumber} onChange={this.onRegistrationNumberChange} />
+                        <Col sm={2}>
+                            <FilterInput type="text" field="Registration Number:"  value={this.registrationNumber} onChange={this.onRegistrationNumberChange} />
+                            <FilterSingleSelectDropdown field="In Parking:" options={this.state.isInParkingOptions} selected={this.state.selectedIsInParkingOption} onChange={this.onIsInParkingChange}/>
+                        </Col>
                         <Col sm={4}>
                             <div>Enter parking date:</div>
                             <DateRangePicker onChange={this.onChangeEnterDateRange} value={this.state.selectedDateRange}/>
                         </Col>
                     </Form.Row><br/>
                     <Form.Row className="align-items-center">
-                        <Col  sm={2}>
-                            <SingleSelectDropdown field="" options={this.state.sortings} selected={this.state.selectedSorting} onChange={this.onSortingChange}/>
+                        <Col  sm={2} className={"pl-4"}>
+                            <FilterSingleSelectDropdown field="Filter by:" options={this.state.sortings} selected={this.state.selectedSorting} onChange={this.onSortingChange}/>
                         </Col>
-                        <Col sm={2}>
-                            <SingleSelectDropdown field="" options={this.state.sortingOrders} selected={this.state.selectedSortingOrder} onChange={this.onSortingOrderChange}/>
+                        <Col sm={2} className={"pl-4"}>
+                            <FilterSingleSelectDropdown field="Order:" options={this.state.sortingOrders} selected={this.state.selectedSortingOrder} onChange={this.onSortingOrderChange}/>
                         </Col>
-                        <Col sm={2}>
-                            <SingleSelectDropdown field="" options={this.state.itemsPerPageOptions} selected={this.state.selectedItemsPerPage} onChange={this.onItemsPerPageChange}/>
+                        <Col sm={2} className={"pl-4"}>
+                            <FilterSingleSelectDropdown field="Show:" options={this.state.itemsPerPageOptions} selected={this.state.selectedItemsPerPage} onChange={this.onItemsPerPageChange}/>
                         </Col>
                     </Form.Row>
                 </Form>  
