@@ -82,7 +82,7 @@ namespace ParkingSystem.Services
         {
             var categories = this.categoryService.GetCategories();
             var discounts = this.discountService.GetDiscounts();
-            var vehicles = data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoResource() { Id = a.VehicleId, RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate, CategoryName = GetCategoryName(a, categories), DiscountPercentage = GetDiscountPercentage(a, discounts) }).ToList();
+            var vehicles = data.Vehicles.Where(a => a.IsInParking == true).Select(a => new VehicleInfoResource() { Id = a.VehicleId, RegistrationNumber = a.RegistrationNumber, DiscountId = a.DiscountId, CategoryId = a.CategoryId, EnterParkingDate = a.EnterParkingDate, ExitParkingDate = a.ExitParkingDate, IsInParking = a.IsInParking, CategoryName = GetCategoryName(a, categories), DiscountPercentage = GetDiscountPercentage(a, discounts) }).ToList();
             foreach (var vehicleInfoModel in vehicles)
             {
                 vehicleInfoModel.DueAmount = CalculationUtilities.CalculateDueAmount(this.data, vehicleInfoModel.CategoryId, vehicleInfoModel.DiscountId, vehicleInfoModel.EnterParkingDate, DateTime.Now);
@@ -143,6 +143,8 @@ namespace ParkingSystem.Services
                 DiscountId = a.DiscountId,
                 CategoryId = a.CategoryId,
                 EnterParkingDate = a.EnterParkingDate,
+                ExitParkingDate = a.ExitParkingDate,
+                IsInParking = a.IsInParking,
                 CategoryName = GetCategoryName(a, categories),
                 DiscountPercentage = GetDiscountPercentage(a, discounts),
                 DueAmount = CalculationUtilities.CalculateDueAmount(this.data, a.CategoryId, a.DiscountId, a.EnterParkingDate, DateTime.Now)

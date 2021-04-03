@@ -3,8 +3,7 @@ import {Form, Col } from 'react-bootstrap'
 
 const MultySelect = ({field, collection, onChangeMultyselect, selectedCategories}) => {
     return (
-
-        <Col sm={2} className="my-1"> 
+        <Col sm={2} className={"pl-4"}> 
             <Form.Label>{field}</Form.Label>
             <Form.Control as="select" multiple value={selectedCategories} onChange={e => onChangeMultyselect(e)}>
             {collection.map((el, i) => {

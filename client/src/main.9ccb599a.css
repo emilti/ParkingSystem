@@ -215,6 +215,8 @@
 }
 .react-daterange-picker--closed .react-daterange-picker__wrapper {
   border-radius: 4px;
+  height: 2em;
+  margin-top: 7px;
 }
 .react-daterange-picker--open {
   border-bottom-left-radius: 0;

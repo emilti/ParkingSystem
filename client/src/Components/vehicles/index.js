@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
+import TopRow from '../TopRow'
 import Vehicle from '../vehicle'
 import MultySelect from '../MultySelect'
 import SingleSelectDropdown from '../SingleSelectDropdown'
-import Input from '../Input'
 import getCookie from '../../Utils/cookie'
 import {Form, Col, Button} from 'react-bootstrap'
 import {buildCategoriesDropdown, buildDiscountsDropdown, getSorting, getSortingOrder, getPageOptions} from '../../Utils/dropdowns'
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 import CustomPagination from '../../Components/CustomPagination'
+import FilterInput from '../../Components/FilterInput'
 import Styles from './index.module.css'
 import '../../main.9ccb599a.css'
 class Vehicles extends React.Component {
@@ -47,7 +48,6 @@ class Vehicles extends React.Component {
         getSortingOrder().then((value) => {this.setState({sortingOrders: value})})
         getPageOptions().then((value) => {this.setState({itemsPerPageOptions: value})})
         this.getVehicles()
-        
     }
     
     getVehicles = async() => {
@@ -71,17 +71,22 @@ class Vehicles extends React.Component {
             vehicles, 
             pages
         } = this.state 
-        return vehicles.map((v, index) => {
+
+        return [this.renderTopRow()].concat(vehicles.map((v, index) => {
                 return (
                         <div key={index}>
-                            <Vehicle registrationNumber = {v.registrationNumber} enterParkingDate={v.enterParkingDate} categoryName={v.categoryName} discountPercentage={v.discountPercentage} dueAmount={v.dueAmount} index={index}/>
+                            <Vehicle registrationNumber={v.registrationNumber} isInParking={v.isInParking} enterParkingDate={v.enterParkingDate} exitParkingDate={v.exitParkingDate} categoryName={v.categoryName} discountPercentage={v.discountPercentage} dueAmount={v.dueAmount} index={index}/>
                         </div>
                     )
-            }).concat(this.renderPagination())
+            })).concat(this.renderPagination())
     }
 
     renderPagination = () => {
         return <CustomPagination pages={this.state.pages} active={this.state.selectedPage} handleSubmit={this.handleSubmit}/>
+    }
+
+    renderTopRow = () =>{
+        return <TopRow/>
     }
 
     handleSubmit = (event, page) => {
@@ -203,10 +208,10 @@ class Vehicles extends React.Component {
         return(
             <div>
                 <Form>
-                    <Form.Row className="align-items-center">
-                        <Input field="" type="text"  value={this.registrationNumber} onChange={this.onRegistrationNumberChange} />
-                        <MultySelect field={"Categories"} collection={this.state.categories} value={this.selectedCategories} onChangeMultyselect={e => this.onCategoriesChange(e)}/>
-                        <MultySelect field={"Discounts"} collection={this.state.discounts} value={this.selectedDiscounts} onChangeMultyselect={e => this.onDiscountsChange(e)}/>
+                    <Form.Row className="align-items-top">
+                        <MultySelect field={"Categories:"} collection={this.state.categories} value={this.selectedCategories} onChangeMultyselect={e => this.onCategoriesChange(e)}/>
+                        <MultySelect field={"Discounts:"} collection={this.state.discounts} value={this.selectedDiscounts} onChangeMultyselect={e => this.onDiscountsChange(e)}/>
+                        <FilterInput type="text" field="Registration Number:"  value={this.registrationNumber} onChange={this.onRegistrationNumberChange} />
                         <Col sm={4}>
                             <div>Enter parking date:</div>
                             <DateRangePicker onChange={this.onChangeEnterDateRange} value={this.state.selectedDateRange}/>
