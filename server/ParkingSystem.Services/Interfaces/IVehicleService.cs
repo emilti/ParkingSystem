@@ -11,7 +11,7 @@ namespace ParkingSystem.Services.Interfaces
         int GetAvailableSpaces();
         ApiResponse SaveVehicle(int categoryId, int? discountId, string registrationNumber, string AppUserId);
         VehicleInfoResource GetVehicleByRegistrationNumber(string registrationNumber);
-        ApiResponse? SoftDeleteVehicle(string registrationNumber, DateTime exitParkingDate);
+        VehicleInfoResource SoftDeleteVehicle(string registrationNumber, DateTime exitParkingDate);
         Decimal? CalculateDueAmount(int vehicleCategoryId, int? vehicleDiscountId, DateTime vehicleEnterParkingDate, DateTime currentDateTime);
         List<VehicleInfoResource> GetVehicles();
         List<VehicleInfoResource> GetVehiclesInParking();

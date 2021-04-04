@@ -12,7 +12,6 @@ const Profile = () =>{
     const [dataItems, setDataItems] = useState([]);
     const [username, setUsername] = useState(null)
     const [email, setEmail] = useState(null)
-    console.log(user)
     useEffect( () => {
         function findProfile() {
         var token = getCookie('x-auth-token')
@@ -27,7 +26,7 @@ const Profile = () =>{
                 res.json().then((responseJson) => {
                     var items = new Array();
                     responseJson.vehicles.map((r) => {  
-                        items.push({registrationNumber: r.registrationNumber, dueAmount: r.dueAmount, enterParkingDate: r.enterParkingDate, exitParkingDate: r.exitParkingDate, isInParking: r.isInParking, categoryName: r.category.name, parkingSpaces: r.category.parkingSpaces, discountPercentage: r.discount == null ? '-': r.discount.discountPercentage + "%"})
+                        items.push({Id: r.id, registrationNumber: r.registrationNumber, dueAmount: r.dueAmount, enterParkingDate: r.enterParkingDate, exitParkingDate: r.exitParkingDate, isInParking: r.isInParking, categoryName: r.category.name, parkingSpaces: r.category.parkingSpaces, discountPercentage: r.discount == null ? '-': r.discount.discountPercentage + "%"})
                     })
 
                     setUsername(responseJson.username)
@@ -42,6 +41,33 @@ const Profile = () =>{
         }   findProfile();
     }, []);
 
+    const onExitParking = (registrationNumber) =>{
+        var token = getCookie('x-auth-token')
+        const requestOptions = {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    RegistrationNumber: registrationNumber
+                })
+            };
+        fetch('http://localhost:57740/Parking/Exit?token='+ token, requestOptions)
+        .then(async res => {
+            if (res.ok) {
+                res.json().then((result => {
+                    var objIndex = dataItems.findIndex((obj => obj.Id == result.id));
+                    var obj = dataItems[objIndex]
+                    var updatedDataItems = [...dataItems]
+                    obj.isInParking = false;
+                    obj.exitParkingDate = result.exitParkingDate;
+                    updatedDataItems[objIndex] = obj
+                    setDataItems(updatedDataItems)
+                }))
+
+            }
+        }).catch(err => {
+            console.log(err)
+        });
+    }
     return (
         <div>
             <Menu/>
@@ -54,7 +80,7 @@ const Profile = () =>{
             <Container className={Styles.containerStyle}>
                 <Row>
                     {dataItems.map((el, i) => 
-                        <ParkingVisitCard indexKey={i} registrationNumber={el.registrationNumber} dueAmount={el.dueAmount} enterParkingDate={el.enterParkingDate} exitParkingDate={el.exitParkingDate} isInParking={el.isInParking} categoryName={el.categoryName} parkingSpaces={el.parkingSpaces} discountPercentage={el.discountPercentage}/>
+                        <ParkingVisitCard indexKey={i} registrationNumber={el.registrationNumber} dueAmount={el.dueAmount} enterParkingDate={el.enterParkingDate} exitParkingDate={el.exitParkingDate} isInParking={el.isInParking} categoryName={el.categoryName} parkingSpaces={el.parkingSpaces} discountPercentage={el.discountPercentage} handleExitParking={onExitParking}/>
                     )}
                 </Row>
             </Container>

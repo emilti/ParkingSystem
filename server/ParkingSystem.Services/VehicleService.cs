@@ -43,14 +43,25 @@ namespace ParkingSystem.Services
             return new ApiOkResponse(vehicle, "Vehicle with registration number " + vehicle.RegistrationNumber + " entered the parking.");
         }
 
-        public ApiResponse SoftDeleteVehicle(string registrationNumber, DateTime exitParkingDate)
+        public VehicleInfoResource SoftDeleteVehicle(string registrationNumber, DateTime exitParkingDate)
         {
             Vehicle vehicle = this.data.Vehicles.FirstOrDefault(a => a.RegistrationNumber == registrationNumber && a.IsInParking == true);
             vehicle.IsInParking = false;
             vehicle.ExitParkingDate = exitParkingDate;
             this.data.SaveChanges();
             Decimal? dueAmount = CalculationUtilities.CalculateDueAmount(this.data, vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, exitParkingDate);
-            return new ApiOkResponse(vehicle, "Vehicle with registration number " + vehicle.RegistrationNumber + " exit the parking. Amount due: " + dueAmount);
+            VehicleInfoResource vehicleInfo = new VehicleInfoResource()
+            {
+                Id = vehicle.VehicleId,
+                RegistrationNumber = vehicle.RegistrationNumber,
+                IsInParking = false,
+                EnterParkingDate = vehicle.EnterParkingDate,
+                ExitParkingDate = vehicle.ExitParkingDate,
+                CategoryId = vehicle.CategoryId,
+                DiscountId = vehicle.DiscountId,
+                DueAmount = dueAmount
+            };
+            return vehicleInfo;
         }
 
         public VehicleInfoResource GetVehicleByRegistrationNumber(string registrationNumber)
@@ -107,7 +118,7 @@ namespace ParkingSystem.Services
 
         public List<VehicleInfoResource> GetVehiclesByUser(Guid AppUserId)
         {
-            var vehicles = this.data.Vehicles.Where(a => a.DriverId == AppUserId).Select(a => new VehicleInfoResource() { RegistrationNumber = a.RegistrationNumber, CategoryId = a.CategoryId, DiscountId = a.DiscountId, ExitParkingDate = a.ExitParkingDate, EnterParkingDate = a.EnterParkingDate, IsInParking = a.IsInParking }).ToList();
+            var vehicles = this.data.Vehicles.Where(a => a.DriverId == AppUserId).Select(a => new VehicleInfoResource() { Id = a.VehicleId, RegistrationNumber = a.RegistrationNumber, CategoryId = a.CategoryId, DiscountId = a.DiscountId, ExitParkingDate = a.ExitParkingDate, EnterParkingDate = a.EnterParkingDate, IsInParking = a.IsInParking }).ToList();
             foreach (var vehicle in vehicles)
             {
                 vehicle.DueAmount = CalculationUtilities.CalculateDueAmount(this.data, vehicle.CategoryId, vehicle.DiscountId, vehicle.EnterParkingDate, DateTime.Now);
@@ -121,7 +132,6 @@ namespace ParkingSystem.Services
         {
             var categories = this.categoryService.GetCategories();
             var discounts = this.discountService.GetDiscounts();
-            //bool[] isInParkingCollection = new bool[]();
             if (selectedCatecories.Contains(Constants.ALL_CATEGORIES) || selectedCatecories.Count() == 0)
             {
                 selectedCatecories = this.categoryService.GetCategories().Select(a => a.CategoryId).ToArray();

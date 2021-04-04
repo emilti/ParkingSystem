@@ -81,7 +81,7 @@ namespace ParkingSystem.Server.Controllers
         public IActionResult Exit(SoftDeleteVehicleResource vehicle)
         {
             var response = vehicleService.SoftDeleteVehicle(vehicle.RegistrationNumber, DateTime.Now);
-            return StatusCode(response.StatusCode, response.Message);
+            return this.Ok(response);
         }
 
         [HttpGet]
