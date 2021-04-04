@@ -36,7 +36,7 @@ const Register = () => {
                     <Row>
                         <Col></Col>
                         <Col md={8}>
-                            <Jumbotron>
+                            <Jumbotron className={Styles.jumbotronStyle}>
                                 <form onSubmit={handleSubmit}>
                                     <Input field="Username" type="text" value={username}  onChange={e => setUsername(e.target.value)} onBlur={e => validateUsername(e, setUsername, setUsernameError)} error={usernameError}></Input>
                                     <Input field="Email" type="text" value={email} onChange={e => setEmail(e.target.value)} onBlur={e => validateEmail(e, setEmail, setEmailError)} error={emailError}></Input>
