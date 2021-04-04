@@ -25,7 +25,7 @@ class Vehicles extends React.Component {
             sortings: [],
             sortingOrders: [],
             itemsPerPageOptions: [],
-            selectedDateRange: [new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate()), new Date()],
+            selectedDateRange: [new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate()), new Date(new Date().getFullYear(),new Date().getMonth(), new Date().getDate() + 1)],
             selectedCategories: [],
             selectedDiscounts: [],
             selectedIsInParkingOption: 'all',
@@ -216,7 +216,7 @@ class Vehicles extends React.Component {
 
     clearFilters = () => {
         this.setState({
-            selectedDateRange: [new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate()), new Date()],
+            selectedDateRange:  [new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate()), new Date(new Date().getFullYear(),new Date().getMonth(), new Date().getDate() + 1)],
             selectedCategories: [],
             selectedDiscounts: [],
             selectedIsInParkingOption: 'all',
