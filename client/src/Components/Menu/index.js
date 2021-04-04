@@ -19,8 +19,8 @@ const Header = () => {
                     <Navbar.Brand to="/">Parking</Navbar.Brand>
                         <Nav className="mr-auto">
                         <Link className="nav-link" to="/" >Home</Link>
-                        {user ? <Link className="nav-link" to="/EnterVehicle">Enter Vehicle</Link> : ""} 
-                        {user && isAdmin ? <Link className="nav-link" to="/Report">Vehicles</Link> : ""} 
+                        {user ? <Link className="nav-link" to="/EnterVehicle">Enter New Visit</Link> : ""} 
+                        {user && isAdmin ? <Link className="nav-link" to="/Report">Visits</Link> : ""} 
                         </Nav>
                         <Nav className="ml-auto">
                            {user ? "" : <Link className="nav-link" to="/Register">Register</Link>} 

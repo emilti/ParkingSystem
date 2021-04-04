@@ -4,6 +4,7 @@ import Input from '../../Components/Input'
 import SingleSelectDropdown from '../../Components/SingleSelectDropdown'
 import Menu from '../../Components/Menu'
 import getCookie from '../../Utils/cookie'
+import Styles from './index.module.css'
 import {buildCategoriesDropdown, buildDiscountsDropdown} from '../../Utils/dropdowns'
 import {validateRegistrationNumber} from '../../Utils/validator.js'
 class EnterVehicle extends Component {
@@ -19,14 +20,6 @@ class EnterVehicle extends Component {
         }
     }
 
-    // validateRegistrationNumber = event => {
-    //     if(event.target.value === ''){
-    //         this.setState({ registrationNumberError: "Invalid registration number." })
-    //     } else {
-    //         this.setState({ registrationNumberError: "" })
-    //     }
-    // }
-    
     componentDidMount(){
         buildCategoriesDropdown("Enter vehicle").then((value) => { 
             this.setState({categories: [...this.state.categories, ...value]
@@ -105,7 +98,7 @@ class EnterVehicle extends Component {
                     <Row>
                         <Col></Col>
                         <Col md={ 8 }>
-                            <Jumbotron>
+                            <Jumbotron className={Styles.jumbotronStyle}>
                                 <form onSubmit={this.handleSubmit}>
                                     <Input field="Registration Number" type="text" onBlur={e => validateRegistrationNumber(e, this.updateRegistrationNumberError)} value={registrationNumber} onChange={this.changeRegistrationNumber} error={registrationNumberError}></Input>
                                     <SingleSelectDropdown field="Category" options={this.state.categories} onChange={this.changeCategory}/>

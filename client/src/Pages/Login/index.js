@@ -10,7 +10,7 @@ import {UserContext} from '../../Hooks/UserContext.js'
 import Menu from '../../Components/Menu'
 import {validateUsername, validatePassword} from '../../Utils/validator.js'
 import useAuth from '../../Hooks/useAuth';
-
+import Styles from './index.module.css'
 const Login = () => {
     const { loginUser, error } = useAuth();
     const [username, setUsername] = useState('')
@@ -32,7 +32,7 @@ const Login = () => {
                 <Row>
                     <Col></Col>
                     <Col md={8}>
-                        <Jumbotron>
+                        <Jumbotron className={Styles.jumbotronStyle}>
                             <form onSubmit={handleSubmit}>
                                 <Input field="Username" type="text" value={username} onBlur={e => validateUsername(e, setUsername, setUsernameError)} onChange={e => setUsername(e.target.value)} error={usernameError}></Input>
                                 <Input  field="Password" type='password' value={password} onBlur={e => validatePassword(e, setPassword, setPasswordError)} onChange={e => setPassword(e.target.value)} error={passwordError}></Input>
