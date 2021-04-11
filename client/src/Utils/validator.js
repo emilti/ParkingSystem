@@ -1,13 +1,14 @@
-const validateUsername = (e, setUsername, setUsernameError) => {
+const validateUsername = (e, setUsername, setUsernameError, setUsernameFilled) => {
     if(!e.target.value){
         setUsernameError("Username field is required.")
     } else {
         setUsernameError("")
         setUsername(e.target.value)
+        setUsernameFilled(true)
     }
 }
 
-const validateEmail = (e, setEmail, setEmailError) => {
+const validateEmail = (e, setEmail, setEmailError, setEmailFilled) => {
     const emailRegex = /^\S+@\S+\.\S+$/;
     if(!e.target.value){
         setEmailError("Email field is required.")
@@ -15,21 +16,23 @@ const validateEmail = (e, setEmail, setEmailError) => {
         setEmailError("Invalid email address.")
     } else {
         setEmailError("")
+        setEmailFilled(true)
         setEmail(e.target.value)
     }
 }
 
 
-const validatePassword = (e, setPassword, setPasswordError) => {
+const validatePassword = (e, setPassword, setPasswordError, setPasswordFilled) => {
     if(!e.target.value){
         setPasswordError("Password field is required.")
     } else {
         setPasswordError("")
         setPassword(e.target.value)
+        setPasswordFilled(true)
     }
 }
 
-const validatePasswordRepeat = (e, password, setPasswordRepeat, setPasswordRepeatError) => {
+const validatePasswordRepeat = (e, password, setPasswordRepeat, setPasswordRepeatError, setPasswordRepeatFilled) => {
     if(!e.target.value){
         setPasswordRepeatError("Password Repeat field is required.")
     } else if(e.target.value !== password){
@@ -37,6 +40,7 @@ const validatePasswordRepeat = (e, password, setPasswordRepeat, setPasswordRepea
     } else{
         setPasswordRepeatError("")
         setPasswordRepeat(e.target.value)
+        setPasswordRepeatFilled(true)
     }
 }
 
