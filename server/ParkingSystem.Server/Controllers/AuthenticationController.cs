@@ -96,6 +96,10 @@ namespace ParkingSystem.Server.Controllers
             var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status400BadRequest, new ApiResponse(400, "User creation failed! Please check user details and try again."));
+            if (await roleManager.RoleExistsAsync(UserRolesResource.Driver))
+            {
+                await userManager.AddToRoleAsync(user, UserRolesResource.Driver);
+            }
 
             return StatusCode(StatusCodes.Status200OK, "User created successfully!");
 
@@ -121,9 +125,7 @@ namespace ParkingSystem.Server.Controllers
 
             if (!await roleManager.RoleExistsAsync(UserRolesResource.Admin))
                 await roleManager.CreateAsync(new IdentityRole(UserRolesResource.Admin));
-            if (!await roleManager.RoleExistsAsync(UserRolesResource.User))
-                await roleManager.CreateAsync(new IdentityRole(UserRolesResource.User));
-
+           
             if (await roleManager.RoleExistsAsync(UserRolesResource.Admin))
             {
                 await userManager.AddToRoleAsync(user, UserRolesResource.Admin);
