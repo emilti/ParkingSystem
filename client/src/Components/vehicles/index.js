@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import TopRow from '../TopRow'
 import Vehicle from '../vehicle'
 import MultySelect from '../MultySelect'
-import SingleSelectDropdown from '../SingleSelectDropdown'
 import getCookie from '../../Utils/cookie'
 import {Form, Col, Button} from 'react-bootstrap'
 import {buildCategoriesDropdown, buildDiscountsDropdown, getIsInParkingOptions, getSorting, getSortingOrder, getPageOptions} from '../../Utils/dropdowns'
@@ -121,9 +120,10 @@ class Vehicles extends React.Component {
             }
             if(response.ok){
                 response.json().then((result => {
-                    console.log(result)
                     this.setState({
-                        vehicles: result
+                        vehicles: result.vehicles,
+                        totalVehiclesCount: result.vehiclesCount,
+                        pages: Math.ceil(this.state.totalVehiclesCount / this.state.selectedItemsPerPage)
                     })
                 }))
             }

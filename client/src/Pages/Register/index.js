@@ -32,11 +32,9 @@ const Register = () => {
 
     useEffect( () => {
         function checkButtonDisabled() {
-            console.log(usernameError === '' &&  emailError === '' && passwordError === '' && passwordRepeatError === '')
             if(usernameError === '' &&  emailError === '' && passwordError === '' && passwordRepeatError === '' &&
                 usernameFilled && emailFilled && passwordFilled && passwordRepeatFilled ){
                 setIsDisabled(false)
-                console.log('here')
             }
             else{
                 setIsDisabled(true)
