@@ -1,9 +1,9 @@
 const buildCategoriesDropdown = async (dropdownType) =>{
     let serverOptions = await getCategories()
     switch(dropdownType){
-        case "Enter vehicle": 
+        case "Enter visit": 
             return [{"value": "", "label": "Select category"}, ...serverOptions]
-        case "Filter vehicles":
+        case "Filter visits":
             return [{"value": "0", "label": "All categories"}, ...serverOptions]
     }
 }
@@ -11,9 +11,9 @@ const buildCategoriesDropdown = async (dropdownType) =>{
 const buildDiscountsDropdown = async (dropdownType) =>{
     let serverOptions = await getDiscounts()
     switch(dropdownType){
-        case "Enter vehicle": 
+        case "Enter visit": 
             return [{"value": "", "label": "Select discount"}, ...serverOptions]
-        case "Filter vehicles":
+        case "Filter visits":
             return [{"value": "0", "label": "All discounts"}, ...serverOptions, {"value": "999", "label": "No discounts"}]
     }
 }
