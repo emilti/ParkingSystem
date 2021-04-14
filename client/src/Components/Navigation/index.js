@@ -7,6 +7,7 @@ import RegisterPage from '../../Pages/Register'
 import HomePage from '../../Pages/Home'
 import ReportPage from '../../Pages/Report'
 import ProfilePage from '../../Pages/Profile'
+import EditVisitPage from '../../Pages/EditVisit'
 
 const Navigation = () =>{
     const { user, setUser, isLoading } = useContext(UserContext);
@@ -29,6 +30,9 @@ const Navigation = () =>{
             </Route>
             <Route path="/Profile"> 
                 {user ? (<ProfilePage />) : (<Redirect to="/" />) }
+            </Route>
+            <Route path="/EditVisit"> 
+                {user && isAdmin ? (<EditVisitPage />) : (<Redirect to="/" />) }
             </Route>
         </Switch>
         )

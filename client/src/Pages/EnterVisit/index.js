@@ -6,7 +6,7 @@ import SingleSelectDropdown from '../../Components/SingleSelectDropdown'
 import Menu from '../../Components/Menu'
 import Styles from './index.module.css'
 import {buildCategoriesDropdown, buildDiscountsDropdown} from '../../Utils/dropdowns'
-import {SubmitVisit} from '../../Utils/submitVisit'
+import {SubmitVisitService} from '../../Services/VisitService'
 import {validateRegistrationNumber} from '../../Utils/validator.js'
 class EnterVisit extends Component {
     constructor(props){
@@ -76,7 +76,7 @@ class EnterVisit extends Component {
     }
 
     handleSubmit = event => {
-        var result = SubmitVisit(event, this.state.categoryId, this.state.discountId, this.state.registrationNumber)
+        var result = SubmitVisitService(event, this.state.categoryId, this.state.discountId, this.state.registrationNumber)
         if(result){
             this.setState({redirect: true})
         }

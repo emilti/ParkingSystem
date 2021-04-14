@@ -1,6 +1,8 @@
 const buildCategoriesDropdown = async (dropdownType) =>{
     let serverOptions = await getCategories()
     switch(dropdownType){
+        case "Edit visit":
+            return [...serverOptions]
         case "Enter visit": 
             return [{"value": "", "label": "Select category"}, ...serverOptions]
         case "Filter visits":
@@ -11,6 +13,8 @@ const buildCategoriesDropdown = async (dropdownType) =>{
 const buildDiscountsDropdown = async (dropdownType) =>{
     let serverOptions = await getDiscounts()
     switch(dropdownType){
+        case "Edit visit":
+            return [{"value": "999", "label": "No discounts"}, ...serverOptions]
         case "Enter visit": 
             return [{"value": "", "label": "Select discount"}, ...serverOptions]
         case "Filter visits":
@@ -49,6 +53,13 @@ const getIsInParkingOptions = async () => {
     return options
 }
 
+const getIsInParkingEditOptions = () => {
+    let options = [
+        {"value": true, "label": "Yes"},
+        {"value": false, "label": "No"}]
+    return options
+}
+
 const getSorting = async () => {
     let options = [
         {"value": '', "label": "No sorting"},
@@ -75,4 +86,4 @@ const getPageOptions = async () => {
 }
 
 
-export {buildCategoriesDropdown, buildDiscountsDropdown, getIsInParkingOptions, getSorting, getSortingOrder, getPageOptions}
+export {buildCategoriesDropdown, buildDiscountsDropdown, getIsInParkingOptions, getIsInParkingEditOptions, getSorting, getSortingOrder, getPageOptions}

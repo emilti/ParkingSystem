@@ -78,7 +78,7 @@ class Visits extends React.Component {
         return [this.renderTopRow()].concat(vehicles.map((v, index) => {
                 return (
                         <div key={index}>
-                            <Visit registrationNumber={v.registrationNumber} isInParking={v.isInParking} enterParkingDate={v.enterParkingDate} exitParkingDate={v.exitParkingDate} categoryName={v.categoryName} discountPercentage={v.discountPercentage} dueAmount={v.dueAmount} index={index}/>
+                            <Visit id={v.id} registrationNumber={v.registrationNumber} isInParking={v.isInParking} enterParkingDate={v.enterParkingDate} exitParkingDate={v.exitParkingDate} categoryId={v.categoryId} categoryName={v.categoryName} discountId={v.discountId} discountPercentage={v.discountPercentage} dueAmount={v.dueAmount} index={index}/>
                         </div>
                     )
             })).concat(this.renderPagination())
@@ -110,6 +110,7 @@ class Visits extends React.Component {
                 selectedPage: this.state.selectedPage,
                 token: token})
             };    
+            console.log(requestOptions)
         event.preventDefault();
         fetch('http://localhost:57740/parking/FilterVehicles', requestOptions)
         .then(async response => {

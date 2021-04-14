@@ -9,7 +9,8 @@ const TopRow = () => {
             <span className={Styles.cellDate}>Exit Parking Date</span>
             <span className={Styles.cell}>Category</span>
             <span className={Styles.cell}>Discount</span>
-            <span className={Styles.cell}>Due Amount</span></div>)
+            <span className={Styles.cell}>Due Amount</span>
+            </div>)
 }
 
 export default TopRow

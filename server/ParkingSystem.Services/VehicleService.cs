@@ -184,5 +184,22 @@ namespace ParkingSystem.Services
             pagedVehicles.vehiclesCount = vehicles.Count;
             return pagedVehicles;
         }
+
+        public ApiResponse EditVehicle(int id, string registrationNumber, bool isInParking, int CategoryId, int? discountId)
+        {
+            var vehicle = this.data.Vehicles.FirstOrDefault(a => a.VehicleId == id);
+            if(vehicle != null)
+            {
+                vehicle.RegistrationNumber = registrationNumber;
+                vehicle.IsInParking = isInParking;
+                vehicle.CategoryId = CategoryId;
+                vehicle.DiscountId = discountId != 999 ? discountId : null;
+                this.data.Vehicles.Update(vehicle);
+                this.data.SaveChanges();
+                return new ApiResponse(200);
+            }
+
+            return new ApiResponse(400);
+        }
     }
 }
