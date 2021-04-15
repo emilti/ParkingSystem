@@ -217,6 +217,7 @@ class Visits extends React.Component {
 
     clearFilters = () => {
         this.setState({
+            registrationNumber: '',
             selectedDateRange:  [new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate()), new Date(new Date().getFullYear(),new Date().getMonth(), new Date().getDate() + 1)],
             selectedCategories: [],
             selectedDiscounts: [],

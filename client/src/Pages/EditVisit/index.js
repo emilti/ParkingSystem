@@ -22,17 +22,16 @@ const EditVisit = (props) => {
     const [categoriesOptions, setCategoriesOptions] = useState([])
     const [discountsOptions, setDiscountsOptions] = useState([])
     const [selectedEnterparkingDate, setSelectedEnterparkingDate] = useState(location.state.enterParkingDate)
-    
+    const [initialValues, setInitialValues] = useState({registrationNumber: location.state.registrationNumber, isInParking: location.state.isInParking, categorySelected: location.state.categoryId, discountSelected: location.state.discountId})
+
     useEffect(() => {
         buildCategoriesDropdown("Edit visit").then((value) => {setCategoriesOptions(value)})
         buildDiscountsDropdown("Edit visit").then((value) => {setDiscountsOptions( value)})
      }, []);
 
     const changeRegistrationNumber = (event) => {
-        console.log(event.target.value)
         setRegistrationNumber(event.target.value)
     }
-   
 
     const changeCategory = (event) => {
         setCategorySelected(event.target.value)
@@ -47,15 +46,22 @@ const EditVisit = (props) => {
     }
 
     const changeIsInParking = (event) =>{
-        console.log(event.target.value)
         setIsInParkingSelected(event.target.value)
     }
 
     const handleSubmit = event => {
-        var result = EditVisitService(event, location.state.id, registrationNumber, isInParkingSelected, categorySelected, discountSelected)
-        if(result){
-            history.push('/report')
-        }
+        EditVisitService(event, location.state.id, registrationNumber, isInParkingSelected, categorySelected, discountSelected)
+    }
+
+    const clearChanges = event => {
+        setRegistrationNumber(initialValues.registrationNumber)
+        setIsInParkingSelected(initialValues.isInParking)
+        setCategorySelected(initialValues.categorySelected)
+        setDiscountSelected(initialValues.discountSelected)
+    }
+
+    const backToVisitsPage = () => {
+        history.push('/report')
     }
 
     return(
@@ -65,15 +71,25 @@ const EditVisit = (props) => {
             <Container>
               <Row>
                     <Col></Col>
-                    <Col md={ 8 }>
+                    <Col md={8}>
                         <Jumbotron className={Styles.jumbotronStyle}>
                             <form onSubmit={handleSubmit}>
                                 <Input field={"Registration number:"} value={registrationNumber} onChange={e => changeRegistrationNumber(e)}/>
-                                <SingleSelectDropdown field={"In parking:"} options={isInParkingOptions} selected={location.state.isInParking} onChange={changeIsInParking}/>
-                                <SingleSelectDropdown field={"Category:"} options={categoriesOptions} selected={location.state.categoryId} onChange={changeCategory}/>
-                                <SingleSelectDropdown field={"Discount:"} options={discountsOptions} selected={location.state.discountId} onChange={changeDiscount}/>
+                                <SingleSelectDropdown field={"In parking:"} options={isInParkingOptions} selected={isInParkingSelected} onChange={changeIsInParking}/>
+                                <SingleSelectDropdown field={"Category:"} options={categoriesOptions} selected={categorySelected} onChange={changeCategory}/>
+                                <SingleSelectDropdown field={"Discount:"} options={discountsOptions} selected={discountSelected} onChange={changeDiscount}/>
                                 {/* <DateTimePicker onChange={changeEnterDateRange} value={location.state.enterParkingDate}/> */}
-                                <Button variant="success" type="submit">Edit visit</Button>
+                                <Row>
+                                    <Col md={4}>
+                                        <Button variant="success" type="submit">Edit visit</Button>
+                                    </Col>
+                                    <Col md={4}>
+                                        <Button variant="warning" type="button" onClick={clearChanges}>Clear changes</Button>
+                                    </Col>
+                                    <Col md={4}>
+                                        <Button variant="info" type="button" onClick={backToVisitsPage}>Back to Report page</Button>
+                                    </Col>
+                                </Row>
                             </form>
                         </Jumbotron>
                     </Col>
