@@ -4,11 +4,11 @@ import {Redirect} from 'react-router-dom'
 import Input from '../../Components/Input'
 import SingleSelectDropdown from '../../Components/SingleSelectDropdown'
 import Menu from '../../Components/Menu'
-import getCookie from '../../Utils/cookie'
 import Styles from './index.module.css'
 import {buildCategoriesDropdown, buildDiscountsDropdown} from '../../Utils/dropdowns'
+import {SubmitVisitService} from '../../Services/VisitService'
 import {validateRegistrationNumber} from '../../Utils/validator.js'
-class EnterVehicle extends Component {
+class EnterVisit extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -27,12 +27,12 @@ class EnterVehicle extends Component {
     }
 
     componentDidMount(){
-        buildCategoriesDropdown("Enter vehicle").then((value) => { 
+        buildCategoriesDropdown("Enter visit").then((value) => { 
             this.setState({categories: [...this.state.categories, ...value]
             })
         })
        
-        buildDiscountsDropdown("Enter vehicle").then((value) => { 
+        buildDiscountsDropdown("Enter visit").then((value) => { 
             this.setState({discounts: [...this.state.discounts, ...value]})
         })
     }
@@ -49,7 +49,6 @@ class EnterVehicle extends Component {
             })
         }
     }
-    
 
     changeCategory = event => {
         this.setState({
@@ -72,40 +71,15 @@ class EnterVehicle extends Component {
         })
     }
 
-    handleSubmit = event => {
-        var token = getCookie('x-auth-token')
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-            body: JSON.stringify({ categoryId: this.state.categoryId, discountId: this.state.discountId, registrationNumber: this.state.registrationNumber, token: token })
-        };
-    
-    
-        event.preventDefault();
-        fetch('http://localhost:57740/parking/enter', requestOptions)
-        .then(async response => {
-            if (!response.ok) {
-                // get error message from body or default to response status
-                const error = response.status;
-                return Promise.reject(error);
-            }
-            if(response.ok){
-                this.setState({
-                    registrationNumberError: '',
-                    categoryId: '',
-                    discountId: '',
-                    redirect: true
-                })
-            }
-        })
-        .catch(error => {
-            this.setState({ errorMessage: error.toString() });
-            console.error('There was an error!', error);
-        });
-    }
-
     updateRegistrationNumberError = (registrationNumberError) => {
         this.setState({registrationNumberError})
+    }
+
+    handleSubmit = event => {
+        var result = SubmitVisitService(event, this.state.categoryId, this.state.discountId, this.state.registrationNumber)
+        if(result){
+            this.setState({redirect: true})
+        }
     }
 
     render(){
@@ -129,7 +103,7 @@ class EnterVehicle extends Component {
                                     <Input field="Registration Number" type="text" onBlur={e => validateRegistrationNumber(e, this.updateRegistrationNumberError)} value={registrationNumber} onChange={this.changeRegistrationNumber} error={registrationNumberError}></Input>
                                     <SingleSelectDropdown field="Category" options={this.state.categories} onChange={this.changeCategory}/>
                                     <SingleSelectDropdown field="Discount" options={this.state.discounts} onChange={this.changeDiscount}/>
-                                    <Button disabled={this.state.isDisabled} variant="success" type="submit">Enter vehicle</Button>
+                                    <Button disabled={this.state.isDisabled} variant="success" type="submit">Enter visit</Button>
                                 </form>
                             </Jumbotron>
                         </Col>
@@ -141,4 +115,4 @@ class EnterVehicle extends Component {
     }
 }
 
-export default EnterVehicle
+export default EnterVisit

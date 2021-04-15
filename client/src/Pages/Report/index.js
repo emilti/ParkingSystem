@@ -1,12 +1,12 @@
 import React from 'react'
-import Vehicles from '../../Components/vehicles'
+import Visits from '../../Components/visits'
 import Menu from '../../Components/Menu'
 
 const Report = () => {
     return (
       <div>
           <Menu/>
-          <Vehicles />
+          <Visits />
       </div>
       
   )

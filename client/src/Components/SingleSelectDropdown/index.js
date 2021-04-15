@@ -10,7 +10,7 @@ const SingleSelectDropdown = ({field, options, onChange, selected}) => {
             <Col sm={10}>
                 <Form.Control as="select" onChange={onChange}>
                     {options.map(option =>
-                        <option key={option.value} selected={option.value == selected} value={option.value}>{option.label}</option>)}
+                       <option key={option.value} selected={option.value == selected} value={option.value}>{option.label}</option>)}
                 </Form.Control>
             </Col>
         </Form.Group>

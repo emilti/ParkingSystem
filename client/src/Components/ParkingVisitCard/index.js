@@ -5,8 +5,8 @@ import Styles from './index.module.css'
 
 const ParkingVisitCard = ({indexKey, registrationNumber, dueAmount, enterParkingDate, exitParkingDate, isInParking, categoryName, parkingSpaces, discountPercentage, handleExitParking}) =>{
 return (
-    <Col md={{span: 4, offset: 1}} key={indexKey}>
-        <Card className={Styles.rowMargin}>
+    <Col md={{span: 4, offset: 1}}>
+        <Card key={indexKey} className={Styles.rowMargin}>
             <Card.Header>Registration number: {registrationNumber}</Card.Header>
                 <ListGroup variant="flush">
                     <ListGroup.Item>Due amount: {dueAmount}</ListGroup.Item>
