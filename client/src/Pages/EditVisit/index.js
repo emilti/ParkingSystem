@@ -23,7 +23,7 @@ const EditVisit = (props) => {
     const [discountsOptions, setDiscountsOptions] = useState([])
     const [selectedEnterparkingDate, setSelectedEnterparkingDate] = useState(location.state.enterParkingDate)
     const [initialValues, setInitialValues] = useState({registrationNumber: location.state.registrationNumber, isInParking: location.state.isInParking, categorySelected: location.state.categoryId, discountSelected: location.state.discountId})
-
+    const [isEditedMessageVisible, setIsEditedMessageVisible] = useState(false)
     useEffect(() => {
         buildCategoriesDropdown("Edit visit").then((value) => {setCategoriesOptions(value)})
         buildDiscountsDropdown("Edit visit").then((value) => {setDiscountsOptions( value)})
@@ -51,6 +51,8 @@ const EditVisit = (props) => {
 
     const handleSubmit = event => {
         EditVisitService(event, location.state.id, registrationNumber, isInParkingSelected, categorySelected, discountSelected)
+        alertVisitEdited()
+        setInitialValues({registrationNumber: registrationNumber, isInParking: isInParkingSelected, categorySelected: categorySelected, discountSelected: discountSelected})
     }
 
     const clearChanges = event => {
@@ -62,6 +64,13 @@ const EditVisit = (props) => {
 
     const backToVisitsPage = () => {
         history.push('/report')
+    }
+
+    const alertVisitEdited = () =>{
+        setIsEditedMessageVisible(true)
+        setTimeout(() => {
+            setIsEditedMessageVisible(false)
+        }, 3000);
     }
 
     return(
@@ -90,6 +99,9 @@ const EditVisit = (props) => {
                                         <Button variant="info" type="button" onClick={backToVisitsPage}>Back to Report page</Button>
                                     </Col>
                                 </Row>
+                                <div className={Styles.alertMessageContainer}>
+                                    {isEditedMessageVisible?<Row><Col sm={{size: 8, order: 2, offset: 4}}><span className={Styles.allertMessage}>Visit information updated!</span></Col></Row>:<Row><Col>&nbsp;</Col></Row>}
+                                </div>
                             </form>
                         </Jumbotron>
                     </Col>
