@@ -8,6 +8,8 @@ import HomePage from '../../Pages/Home'
 import ReportPage from '../../Pages/Report'
 import ProfilePage from '../../Pages/Profile'
 import EditVisitPage from '../../Pages/EditVisit'
+import NotFoundPage from '../../Pages/NotFound'
+
 
 const Navigation = () =>{
     const { user, setUser, isLoading } = useContext(UserContext);
@@ -34,6 +36,7 @@ const Navigation = () =>{
             <Route path="/EditVisit"> 
                 {user && isAdmin ? (<EditVisitPage />) : (<Redirect to="/" />) }
             </Route>
+            <Route component={NotFoundPage}/> 
         </Switch>
         )
 }
