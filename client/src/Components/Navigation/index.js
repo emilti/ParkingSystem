@@ -1,12 +1,14 @@
 import React, { useContext } from 'react'
 import {Switch, Route, Redirect} from 'react-router-dom'
 import {UserContext} from '../../Hooks/UserContext.js'
-import EnterVehiclePage from '../../Pages/EnterVehicle'
+import EnterVisitPage from '../../Pages/EnterVisit'
 import LoginPage from '../../Pages/Login'
 import RegisterPage from '../../Pages/Register'
 import HomePage from '../../Pages/Home'
 import ReportPage from '../../Pages/Report'
 import ProfilePage from '../../Pages/Profile'
+import EditVisitPage from '../../Pages/EditVisit'
+import NotFoundPage from '../../Pages/NotFound'
 
 const Navigation = () =>{
     const { user, setUser, isLoading } = useContext(UserContext);
@@ -16,7 +18,7 @@ const Navigation = () =>{
         <Switch>
             <Route path="/" exact component={HomePage}/>
             <Route path="/EnterVehicle">
-                {user ? (<EnterVehiclePage />): (<Redirect to="/login" />)}
+                {user ? (<EnterVisitPage />): (<Redirect to="/login" />)}
             </Route>
             <Route path="/Login">
                 {user ? (<Redirect to="/" />): (<LoginPage />)}
@@ -30,6 +32,10 @@ const Navigation = () =>{
             <Route path="/Profile"> 
                 {user ? (<ProfilePage />) : (<Redirect to="/" />) }
             </Route>
+            <Route path="/EditVisit"> 
+                {user && isAdmin ? (<EditVisitPage />) : (<Redirect to="/" />) }
+            </Route>
+            <Route component={NotFoundPage}/> 
         </Switch>
         )
 }
