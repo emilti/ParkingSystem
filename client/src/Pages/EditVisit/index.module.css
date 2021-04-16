@@ -1,0 +1,12 @@
+.jumbotronStyle{
+    margin-top: 10px;
+}
+
+.alertMessageContainer{
+    margin-top: 6%;
+}
+
+.allertMessage{
+    color:green;
+    font-size: large;
+}

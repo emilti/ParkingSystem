@@ -1,18 +1,17 @@
-import React, { Component } from 'react'
+import React from 'react'
 import TopRow from '../TopRow'
-import Vehicle from '../vehicle'
+import Visit from '../visit'
 import MultySelect from '../MultySelect'
-import SingleSelectDropdown from '../SingleSelectDropdown'
 import getCookie from '../../Utils/cookie'
 import {Form, Col, Button} from 'react-bootstrap'
 import {buildCategoriesDropdown, buildDiscountsDropdown, getIsInParkingOptions, getSorting, getSortingOrder, getPageOptions} from '../../Utils/dropdowns'
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
-import CustomPagination from '../../Components/CustomPagination'
-import FilterInput from '../../Components/FilterInput'
+import CustomPagination from '../CustomPagination'
+import FilterInput from '../FilterInput'
 import FilterSingleSelectDropdown from '../FilterSingleSelectDropdown'
 import Styles from './index.module.css'
 import '../../main.9ccb599a.css'
-class Vehicles extends React.Component {
+class Visits extends React.Component {
     constructor(props){
         super(props)
         this.state = {
@@ -45,16 +44,16 @@ class Vehicles extends React.Component {
     }
     
     componentDidMount(){
-        buildCategoriesDropdown("Filter vehicles").then((value) => {this.setState({categories: value})})
-        buildDiscountsDropdown("Filter vehicles").then((value) => {this.setState({discounts: value})})
+        buildCategoriesDropdown("Filter visits").then((value) => {this.setState({categories: value})})
+        buildDiscountsDropdown("Filter visits").then((value) => {this.setState({discounts: value})})
         getIsInParkingOptions().then((value) => {this.setState({isInParkingOptions: value})})
         getSorting().then((value) => {this.setState({sortings: value})})
         getSortingOrder().then((value) => {this.setState({sortingOrders: value})})
         getPageOptions().then((value) => {this.setState({itemsPerPageOptions: value})})
-        this.getVehicles()
+        this.getVisits()
     }
     
-    getVehicles = async() => {
+    getVisits = async() => {
         var token = getCookie('x-auth-token')
         const requestOptions = {
             method: 'GET',
@@ -70,7 +69,7 @@ class Vehicles extends React.Component {
         })
     }
 
-    renderVehicles = () =>{
+    renderVisits = () =>{
         const {
             vehicles, 
             pages
@@ -79,7 +78,7 @@ class Vehicles extends React.Component {
         return [this.renderTopRow()].concat(vehicles.map((v, index) => {
                 return (
                         <div key={index}>
-                            <Vehicle registrationNumber={v.registrationNumber} isInParking={v.isInParking} enterParkingDate={v.enterParkingDate} exitParkingDate={v.exitParkingDate} categoryName={v.categoryName} discountPercentage={v.discountPercentage} dueAmount={v.dueAmount} index={index}/>
+                            <Visit id={v.id} registrationNumber={v.registrationNumber} isInParking={v.isInParking} enterParkingDate={v.enterParkingDate} exitParkingDate={v.exitParkingDate} categoryId={v.categoryId} categoryName={v.categoryName} discountId={v.discountId} discountPercentage={v.discountPercentage} dueAmount={v.dueAmount} index={index}/>
                         </div>
                     )
             })).concat(this.renderPagination())
@@ -111,6 +110,7 @@ class Vehicles extends React.Component {
                 selectedPage: this.state.selectedPage,
                 token: token})
             };    
+            console.log(requestOptions)
         event.preventDefault();
         fetch('http://localhost:57740/parking/FilterVehicles', requestOptions)
         .then(async response => {
@@ -121,9 +121,10 @@ class Vehicles extends React.Component {
             }
             if(response.ok){
                 response.json().then((result => {
-                    console.log(result)
                     this.setState({
-                        vehicles: result
+                        vehicles: result.vehicles,
+                        totalVehiclesCount: result.vehiclesCount,
+                        pages: Math.ceil(this.state.totalVehiclesCount / this.state.selectedItemsPerPage)
                     })
                 }))
             }
@@ -209,13 +210,14 @@ class Vehicles extends React.Component {
         },
         () => {
             this.setState({pages: Math.ceil(this.state.totalVehiclesCount / this.state.selectedItemsPerPage)}, 
-            () => this.renderVehicles())
+            () => this.renderVisits())
             }
         )
     }
 
     clearFilters = () => {
         this.setState({
+            registrationNumber: '',
             selectedDateRange:  [new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate()), new Date(new Date().getFullYear(),new Date().getMonth(), new Date().getDate() + 1)],
             selectedCategories: [],
             selectedDiscounts: [],
@@ -266,7 +268,7 @@ class Vehicles extends React.Component {
                 
                 <div className={Styles.containerPosition}>
                 {
-                   this.renderVehicles()
+                   this.renderVisits()
                 }
                 </div>
                 
@@ -276,4 +278,4 @@ class Vehicles extends React.Component {
     }
 } 
 
-export default Vehicles
+export default Visits

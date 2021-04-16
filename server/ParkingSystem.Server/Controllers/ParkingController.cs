@@ -95,7 +95,7 @@ namespace ParkingSystem.Server.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         public IActionResult GetVehicles()
         {
             var vehicles = vehicleService.GetVehicles();
@@ -121,10 +121,18 @@ namespace ParkingSystem.Server.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         public IActionResult FilterVehicles([FromBody]FilterVehiclesResource filterVehiclesResource)
         {
             return this.Ok(this.vehicleService.GetFilteredVehicles(filterVehiclesResource.registrationNumber, filterVehiclesResource.selectedCategories, filterVehiclesResource.selectedDiscounts, filterVehiclesResource.selectedIsInParkingOption, filterVehiclesResource.selectedDateRange, filterVehiclesResource.selectedSorting, filterVehiclesResource.selectedSortingOrder, filterVehiclesResource.selectedPage, filterVehiclesResource.selectedItemsPerPage));
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        //[Authorize(Roles = "Administrator")]
+        public IActionResult EditVehicle([FromBody] EditVehicleResource editVehiclesResource)
+        {
+            return this.Ok(this.vehicleService.EditVehicle(editVehiclesResource.id, editVehiclesResource.registrationNumber, editVehiclesResource.isInParking, editVehiclesResource.categoryId, editVehiclesResource.discountId));
         }
     }
 }

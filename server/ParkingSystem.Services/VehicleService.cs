@@ -128,7 +128,7 @@ namespace ParkingSystem.Services
             return vehicles;
         }
 
-        public List<VehicleInfoResource> GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int?[] selectedDiscounts, bool? isInParking, DateTime[] dateRange, int? sorting, int? sortingOrder, int page, int itemsPerPage)
+        public PagedVehiclesResource GetFilteredVehicles(string registrationNumber, int[] selectedCatecories, int?[] selectedDiscounts, bool? isInParking, DateTime[] dateRange, int? sorting, int? sortingOrder, int page, int itemsPerPage)
         {
             var categories = this.categoryService.GetCategories();
             var discounts = this.discountService.GetDiscounts();
@@ -165,16 +165,41 @@ namespace ParkingSystem.Services
                 DiscountPercentage = GetDiscountPercentage(a, discounts),
                 DueAmount = CalculationUtilities.CalculateDueAmount(this.data, a.CategoryId, a.DiscountId, a.EnterParkingDate, DateTime.Now)
             }).ToList();
+            PagedVehiclesResource pagedVehicles = new PagedVehiclesResource();
+
             if (sortingOrder == (int?)SortingOrders.Ascending && propertyInfo != null)
             {
-                return vehicles.OrderBy(x => propertyInfo.GetValue(x, null)).Skip(itemsPerPage *(page - 1)).Take(itemsPerPage).ToList();
+                pagedVehicles.vehicles = vehicles.OrderBy(x => propertyInfo.GetValue(x, null)).Skip(itemsPerPage * (page - 1)).Take(itemsPerPage).ToList();
+                pagedVehicles.vehiclesCount = vehicles.Count;
+                return pagedVehicles;
             }
             if (sortingOrder == (int?)SortingOrders.Descending && propertyInfo != null)
             {
-                return vehicles.OrderByDescending(x => propertyInfo.GetValue(x, null)).Skip(itemsPerPage * (page - 1)).Take(itemsPerPage).ToList();
+                pagedVehicles.vehicles = vehicles.OrderByDescending(x => propertyInfo.GetValue(x, null)).Skip(itemsPerPage * (page - 1)).Take(itemsPerPage).ToList();
+                pagedVehicles.vehiclesCount = vehicles.Count;
+                return pagedVehicles;
             }
 
-            return vehicles.Skip(itemsPerPage * (page - 1)).Take(itemsPerPage).ToList();
+            pagedVehicles.vehicles = vehicles.Skip(itemsPerPage * (page - 1)).Take(itemsPerPage).ToList();
+            pagedVehicles.vehiclesCount = vehicles.Count;
+            return pagedVehicles;
+        }
+
+        public ApiResponse EditVehicle(int id, string registrationNumber, bool isInParking, int CategoryId, int? discountId)
+        {
+            var vehicle = this.data.Vehicles.FirstOrDefault(a => a.VehicleId == id);
+            if(vehicle != null)
+            {
+                vehicle.RegistrationNumber = registrationNumber;
+                vehicle.IsInParking = isInParking;
+                vehicle.CategoryId = CategoryId;
+                vehicle.DiscountId = discountId != 999 ? discountId : null;
+                this.data.Vehicles.Update(vehicle);
+                this.data.SaveChanges();
+                return new ApiResponse(200);
+            }
+
+            return new ApiResponse(400);
         }
     }
 }

@@ -10,6 +10,7 @@ import ProfilePage from '../../Pages/Profile'
 import EditVisitPage from '../../Pages/EditVisit'
 import NotFoundPage from '../../Pages/NotFound'
 
+
 const Navigation = () =>{
     const { user, setUser, isLoading } = useContext(UserContext);
     const isAdmin = user && user.role === "Administrator"
