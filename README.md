@@ -15,7 +15,7 @@ To run the application follow these steps:
 5. Open CMD and navigate to the Client folder.
 6. Type npm start or yarn start 
 
-Frontend:
+Frontend
 There are everal screens to navigate through the application.
 * Register - user registers in the application. Accessible for all users. When user registers he/she receives role "Driver"
 * Login - user logs in the application. Accessible for all users.
@@ -24,8 +24,8 @@ There are everal screens to navigate through the application.
 * Visits - displays a list of all the visits to the parking. Accessible only to the users with the role "Administrator".
 * Edit Visit - when the admisnistrator user click on a row from the visits list he/she is redirected to a page where it can edit the opened visit.
 
-Backend endpoints:
-Enter the parking:
+Backend
+<br/>Enter the parking:
 ```
 POST /Parking/Enter HTTP/1.1
 Host: localhost:57740
@@ -66,3 +66,24 @@ Get due amount for a vehicle in the parking:
 GET /Parking/GetDueAmount?registrationNumber=test HTTP/1.1
 Host: localhost:57740
 ```
+
+Get profile data:
+```
+POST /authenticate/profile?token={token} HTTP/1.1
+Host: localhost:57740
+Authorization: bearer {token}
+```
+
+Edit visit:
+```
+POST /Parking/EditVehicle HTTP/1.1
+Host: localhost:57740
+Authorization: bearer {token}
+Content-Type: application/json
+Content-Length: 92
+
+{"id": 46,
+"registrationNumber": "testedit",
+ "categoryId": 1,
+ "discountId": 1}       
+``` 
