@@ -2,12 +2,12 @@
 
 The application purpose is to track the visits in a parking and calculate the amount due for the users of the parking. 
 To run the application follow these steps:
-Prerequisits
+<br/>Prerequisits
 * For the server part you must have installed Visual studio, .NET 5 and SQL 
 * You must have installed node.js
 
 1. Pull the code for the client and the server
-2. Open the server in Visual studio. 
+2. Open the server solution file in Visual studio. 
 3. Open Package-manager-console and type command update-database. 
 4. Start the server. When the server is started ParkingSystemDb database should be initialized and seeded. Check in the MS SQL Management Studio for it.
 5. Open CMD and navigate to the Client folder.
