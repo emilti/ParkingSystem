@@ -103,7 +103,7 @@ namespace ParkingSystem.Server
             app.ConfigureCustomExceptionMiddleware();
             app.UseCors(builder =>
                 builder
-                  .WithOrigins("http://localhost:3000")
+                  .WithOrigins(new string[]{"http://localhost:3000", "http://localhost:4200"})
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials()
