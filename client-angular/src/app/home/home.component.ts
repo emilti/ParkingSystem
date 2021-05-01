@@ -11,12 +11,12 @@ import StaticData from '../core/models/StaticData';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  totalParkingSpacesTitle = "Total Parking Spaces:";
-  availableParkingSpacesTitl = "Free Parking Spaces:";
-  categoriesTitle = "Categories:";
-  discountsTitle = "Discounts:";
+  totalParkingSpacesCardTitle = "Total Parking Spaces:";
+  availableParkingSpacesCardTitle = "Free Parking Spaces:";
+  categoriesCardTitle = "Categories:";
+  discountsCardTitle = "Discounts:";
   totalParkingSpacesCardBody: String = "";
-  availableParkingSpacesBody: String = "";
+  availableParkingSpacesCardBody: String = "";
   categoriesCardBody: String = "";
   categories: Array<CategoryInfo> = [];
   discounts: Array<DiscountInfo> = [];
@@ -32,6 +32,10 @@ export class HomeComponent implements OnInit {
       this.categories = data.categories;
       this.discounts = data.discounts;
     })
-  }
+
+    this.homeService.getAvailableSpaces().subscribe((data) => {
+      this.availableParkingSpacesCardBody = data.availableSpaces.toString();
+    })
+}
 
 }
