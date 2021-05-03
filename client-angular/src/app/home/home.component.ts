@@ -21,6 +21,31 @@ export class HomeComponent implements OnInit {
   categories: Array<CategoryInfo> = [];
   discounts: Array<DiscountInfo> = [];
   discountCardBody: String = "";
+  totalNumberCard = {
+    color: "black",
+    fontSize: "35px",
+    fontWeight: "bold"
+  }
+
+  numberCardContainer = {
+    padding: "10%"
+  }
+  availableNumberCard = {
+    color: "green",
+    fontSize: "35px",
+    fontWeight: "bold"
+  }
+
+  listCard = {
+    fontSize: "20px",
+    fontWeight: "bold",
+    color: "black"
+  }
+
+  listCardContainer = {
+    padding: "4%"
+  }
+
 
   constructor(private homeService: HomeService) { 
     

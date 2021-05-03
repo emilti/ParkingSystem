@@ -8,8 +8,9 @@ import { Component, Input, OnInit } from '@angular/core';
 export class StatisticsCardComponent implements OnInit {
 
   @Input() cardTitle: String = "";
-
-  constructor() { }
+  @Input() customContentStyle: Object = {};
+  @Input() customContentContainerStyle: Object = {};
+  constructor() { } 
 
   ngOnInit(): void {
 
