@@ -1,0 +1,8 @@
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>{{cardTitle}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content [ngStyle]="customContentContainerStyle" >
+      <div [ngStyle]="customContentStyle"><ng-content></ng-content></div>
+    </mat-card-content>
+  </mat-card>

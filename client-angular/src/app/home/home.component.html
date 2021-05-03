@@ -1,1 +1,28 @@
-<p>home works!</p>
+
+<mat-grid-list cols="5" rowHeight="2:1">
+    <mat-grid-tile></mat-grid-tile>
+    <mat-grid-tile >
+        <app-statistics-card [customContentContainerStyle]="numberCardContainer" [customContentStyle]="totalNumberCard" [cardTitle]="totalParkingSpacesCardTitle">{{totalParkingSpacesCardBody}}</app-statistics-card>
+    </mat-grid-tile>
+    <mat-grid-tile></mat-grid-tile>
+    <mat-grid-tile>
+        <app-statistics-card [customContentContainerStyle]="numberCardContainer" [customContentStyle]="availableNumberCard" [cardTitle]="availableParkingSpacesCardTitle">{{availableParkingSpacesCardBody}}</app-statistics-card>
+    </mat-grid-tile>
+    <mat-grid-tile></mat-grid-tile>
+    <mat-grid-tile></mat-grid-tile>
+    <mat-grid-tile>
+        <app-statistics-card [customContentContainerStyle]="listCard" [customContentStyle]="listCardContainer" [cardTitle]="categoriesCardTitle"><div *ngFor="let c of categories">
+            <span>{{c.name}}</span>
+            <span>&nbsp;&nbsp; Parking spaces: {{c.parkingSpaces}}</span>
+        </div></app-statistics-card> 
+    </mat-grid-tile>
+    <mat-grid-tile></mat-grid-tile>
+    <mat-grid-tile>
+        <app-statistics-card [customContentContainerStyle]="listCard" [customContentStyle]="listCardContainer" [cardTitle]="discountsCardTitle"><div *ngFor="let d of discounts">
+        <span>{{d.name}}:&nbsp;</span>
+        <span>{{d.discountPercentage}}%</span>
+    </div>
+</app-statistics-card> 
+</mat-grid-tile>
+<mat-grid-tile></mat-grid-tile>
+</mat-grid-list>
