@@ -1,0 +1,38 @@
+a {
+    text-decoration: none;
+    color: white;
+}
+a:hover, a:active{
+    color: lightgray;
+}
+.navigation-items, .auth-navigation-items{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navigation-items li{
+    float:left
+}
+
+.auth-navigation-items li{
+    float: right
+}
+
+mat-toolbar{
+    border-radius: 3px;
+}
+@media(max-width: 959px){
+    mat-toolbar{
+        border-radius: 0px;
+    }
+}
+
+.menu-container{
+    width: 100%;
+}
+
+li{
+    margin-left: 10px;
+    margin-right: 10px;
+}

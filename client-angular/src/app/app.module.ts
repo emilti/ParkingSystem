@@ -11,10 +11,11 @@ import { HttpClientModule } from '@angular/common/http';
 import {MatCardModule} from '@angular/material/card';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { HomeModule } from './home/home.module';
+import { SharedModule } from './shared/shared.module';
+import { NavbarComponent } from './shared/navbar/navbar.component';
 @NgModule({
   declarations: [
     AppComponent
-    
   ],
   imports: [
     BrowserModule,
@@ -23,7 +24,8 @@ import { HomeModule } from './home/home.module';
     CoreModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    HomeModule
+    HomeModule,
+    SharedModule
   ],
   providers: [],
   bootstrap: [AppComponent]

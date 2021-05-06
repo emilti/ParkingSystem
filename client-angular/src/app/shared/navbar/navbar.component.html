@@ -1,0 +1,23 @@
+<mat-toolbar color="primary">
+     <div>
+        <a routerLink="/home">Home</a>
+    </div>
+    <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs class="menu-container">
+        <ul fxLayout fxLayoutGap="15px" class="navigation-items">
+            <li>
+                <a class="visits-menu-items" routerLink="/entervisits">Enter visits</a>
+            </li>
+            <li>
+                <a class="visits-menu-items" routerLink="/allvisits">All visits</a>
+            </li>
+        </ul>
+        <ul fxLayout fxLayoutGap="15px" class="auth-navigation-items">
+            <li>
+                <a class="auth-menu-items" routerLink="/account">Log out</a>
+            </li>
+            <li>
+                <a class="auth-menu-items" routerLink="/Profile">Profile</a>
+            </li>
+        </ul>
+    </div>
+  </mat-toolbar>
