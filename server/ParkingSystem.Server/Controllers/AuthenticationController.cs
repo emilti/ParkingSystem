@@ -101,7 +101,7 @@ namespace ParkingSystem.Server.Controllers
                 await userManager.AddToRoleAsync(user, UserRolesResource.Driver);
             }
 
-            return StatusCode(StatusCodes.Status200OK, "User created successfully!");
+            return this.Ok(user);
 
         }
 
