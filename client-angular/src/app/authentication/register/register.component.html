@@ -1,0 +1,30 @@
+<div class="container">
+    <h1>Register</h1>
+    <form [formGroup]="form" (submit)="register()">
+      <div class="form-group">
+        <label for="username">Username</label>
+          <input type="text" class="form-control" formControlName="username">
+          <div *ngIf="this.form.controls.username.invalid && this.form.controls.username.touched" class="alert alert-dark">
+            Please provide your username!
+          </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="text" class="form-control" formControlName="email">
+        <div *ngIf="this.form.controls.email.invalid && this.form.controls.email.touched" class="alert alert-dark">
+          Please provide a correct email address!
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" formControlName="password" >
+        <div *ngIf="this.form.controls.password.invalid && this.form.controls.password.touched" class="alert alert-dark">
+          Password must have at least 4 characters!
+        </div>
+      </div>
+      <button type="submit" class="btn btn-dark" [disabled]="form.invalid">Sign Up</button>
+    </form>
+  </div>
+  
